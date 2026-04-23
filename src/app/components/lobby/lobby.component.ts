@@ -1,0 +1,56 @@
+import { Component, signal, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { GameStateService } from '../../services/game-state.service';
+
+@Component({
+  selector: 'app-lobby',
+  imports: [CommonModule, FormsModule],
+  templateUrl: './lobby.component.html',
+  styleUrl: './lobby.component.css',
+})
+export class LobbyComponent {
+  playerName = signal('');
+  roomCodeInput = signal('');
+
+  get s() { return this.gs.state; }
+  get rId() { return this.gs.roomId; }
+  get lId() { return this.gs.localPlayerId; }
+
+  constructor(private gs: GameStateService, private router: Router) {
+    effect(() => {
+      if (this.s().phase !== 'lobby') {
+        this.router.navigate(['/game']);
+      }
+    });
+  }
+
+  get isHost() {
+    const state = this.s();
+    return state.players.length > 0 && state.players[0].id === this.lId();
+  }
+
+  async createRoom() {
+    if (!this.playerName().trim()) { alert('Vui lòng nhập tên!'); return; }
+    try {
+      await this.gs.createRoom(this.playerName().trim());
+    } catch (e: any) {
+      alert(e.message);
+    }
+  }
+
+  async joinRoom() {
+    if (!this.playerName().trim()) { alert('Vui lòng nhập tên!'); return; }
+    if (!this.roomCodeInput().trim()) { alert('Vui lòng nhập mã phòng!'); return; }
+    try {
+      await this.gs.joinExistingRoom(this.roomCodeInput().trim(), this.playerName().trim());
+    } catch (e: any) {
+      alert(e.message);
+    }
+  }
+
+  startGame() {
+    this.gs.startGameHost();
+  }
+}

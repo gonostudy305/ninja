@@ -1,0 +1,38 @@
+<div class="winner-page">
+  <div class="confetti-bg">
+    @for (i of [1,2,3,4,5,6,7,8,9,10,11,12]; track i) {
+      <div class="confetti-piece" [style.left.%]="i * 8" [style.animation-delay.s]="i * 0.3"></div>
+    }
+  </div>
+
+  <div class="winner-container">
+    <div class="trophy-area">
+      <div class="trophy">🏆</div>
+      @if (winner) {
+        <h1 class="title" style="font-size: 3.5rem; color: #f1c40f; text-shadow: 0 0 20px rgba(241,196,15,0.8); margin-bottom: 0;">{{ winner.name | uppercase }}</h1>
+        <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); font-size: 1.5rem; margin-top: 5px; margin-bottom: 15px;">ĐÃ CHIẾN THẮNG!</h2>
+        <span>{{ factionLabel(winner.houseCard?.faction) }} &nbsp;·&nbsp; {{ getPlayerScore(winner) }} Tokens 💰</span>
+      } @else {
+        <h1 class="title">Chiến thắng!</h1>
+      }
+    </div>
+
+    <div class="divider"></div>
+
+    <h3 class="leaderboard-title">Bảng xếp hạng</h3>
+    <div class="leaderboard">
+      @for (p of sortedPlayers; track p.id; let i = $index) {
+        <div class="leaderboard-row" [class.top-player]="p.id === winner?.id">
+          <span class="rank-num">{{ i + 1 }}</span>
+          <span class="lb-name">{{ p.name }}</span>
+          <span class="lb-faction">{{ factionLabel(p.houseCard?.faction) }}</span>
+          <span class="lb-honor">💰 {{ getPlayerScore(p) }} pt</span>
+        </div>
+      }
+    </div>
+
+    <button class="btn btn-gold btn-lg btn-block mt-32" id="btn-play-again" (click)="gs.resetGame()">
+      🔄 &nbsp; Chơi lại
+    </button>
+  </div>
+</div>

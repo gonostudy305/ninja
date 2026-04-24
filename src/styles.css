@@ -166,7 +166,7 @@ h3 {
 }
 
 /* ═══════════════════════════════════════════════════
-   BUTTONS
+   BUTTONS — Poker-Style Skeuomorphic System
    ═══════════════════════════════════════════════════ */
 
 .btn {
@@ -174,11 +174,12 @@ h3 {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
+  padding: 14px 28px;
+  min-height: 44px;
   border-radius: var(--radius);
   border: none;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all var(--transition-fast);
   text-transform: uppercase;
@@ -186,89 +187,219 @@ h3 {
   font-family: var(--font-heading);
   position: relative;
   overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.btn:active {
-  transform: scale(0.97);
+/* Shine sweep on hover */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.07), transparent);
+  transition: left 0.4s ease;
+  pointer-events: none;
 }
 
+.btn:hover:not(:disabled)::after {
+  left: 100%;
+}
+
+/* 3D Press effect */
+.btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none !important;
+  filter: brightness(0.9);
+}
+
+/* Disabled — clearly non-interactive */
 .btn:disabled {
-  opacity: 0.3;
+  opacity: 0.35;
   cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(0.3);
 }
 
-/* Primary Button — Ruby Red (CTA) */
+/* Accessibility focus ring */
+.btn:focus-visible {
+  outline: 2px solid rgb(var(--accent-gold-rgb));
+  outline-offset: 2px;
+}
+
+/* ── PRIMARY: Ruby Red CTA (Poker "BET" / "CALL") ── */
 .btn-gold {
-  background: rgb(var(--action-red-rgb)) !important;
+  background: linear-gradient(180deg, #D93636 0%, #A82828 100%) !important;
   color: #fff !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: var(--shadow-chip);
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.3) inset;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .btn-gold:hover:not(:disabled) {
-  background: rgba(var(--action-red-rgb), 0.85) !important;
-  box-shadow: 0 0 20px rgba(var(--action-red-rgb), 0.5);
-  transform: translateY(-1px);
+  background: linear-gradient(180deg, #E04040 0%, #B83030 100%) !important;
+  box-shadow:
+    0 6px 16px rgba(var(--action-red-rgb), 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.15) inset;
+  transform: translateY(-2px);
 }
 
-/* Secondary Button — Outlined */
+.btn-gold:active:not(:disabled) {
+  background: linear-gradient(180deg, #A02020 0%, #8A1A1A 100%) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5) inset !important;
+  transform: translateY(1px);
+}
+
+/* ── SECONDARY: Outlined (Poker "CHECK" / "FOLD") ── */
 .btn-outline {
   background: rgba(255, 255, 255, 0.04) !important;
   color: var(--text) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .btn-outline:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
 }
 
-/* Faction Buttons */
-.btn-crane {
-  background: var(--crane);
+.btn-outline:active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.02) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) inset !important;
+  transform: translateY(1px);
+}
+
+/* ── OUTLINE GOLD: Gold bordered (Poker "SKIP") ── */
+.btn-outline-gold {
+  background: rgba(var(--accent-gold-rgb), 0.06) !important;
+  color: rgb(var(--accent-gold-rgb)) !important;
+  border: 1px solid rgba(var(--accent-gold-rgb), 0.35) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline-gold:hover:not(:disabled) {
+  background: rgba(var(--accent-gold-rgb), 0.12) !important;
+  border-color: rgba(var(--accent-gold-rgb), 0.6) !important;
+  box-shadow: 0 0 12px rgba(var(--accent-gold-rgb), 0.2);
+  transform: translateY(-1px);
+}
+
+/* ── DANGER: Kill/Attack (Poker "ALL IN") ── */
+.btn-danger {
+  background: linear-gradient(180deg, #DC2626 0%, #991B1B 100%);
   color: #fff;
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(var(--action-red-rgb), 0.15),
+    0 1px 0 rgba(255, 255, 255, 0.1) inset;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.btn-crane:hover {
-  box-shadow: 0 0 12px var(--crane);
+.btn-danger:hover:not(:disabled) {
+  box-shadow:
+    0 6px 20px rgba(var(--action-red-rgb), 0.5),
+    0 0 30px rgba(var(--action-red-rgb), 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-danger:active:not(:disabled) {
+  background: linear-gradient(180deg, #991B1B 0%, #7F1D1D 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.6) inset !important;
+  transform: translateY(1px);
+}
+
+/* ── FACTION Buttons ── */
+.btn-crane {
+  background: linear-gradient(180deg, #3B82F6 0%, #2563EB 100%);
+  color: #fff;
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3), 0 1px 0 rgba(255, 255, 255, 0.1) inset;
+}
+
+.btn-crane:hover:not(:disabled) {
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
 }
 
 .btn-lotus {
-  background: var(--lotus);
+  background: linear-gradient(180deg, #EF4444 0%, #DC2626 100%);
   color: #fff;
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3), 0 1px 0 rgba(255, 255, 255, 0.1) inset;
 }
 
-.btn-lotus:hover {
-  box-shadow: 0 0 12px var(--lotus);
+.btn-lotus:hover:not(:disabled) {
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
+  transform: translateY(-2px);
 }
 
-.btn-danger {
-  background: rgb(var(--action-red-rgb));
-  color: #fff;
-}
-
-.btn-danger:hover {
-  box-shadow: 0 0 15px rgba(var(--action-red-rgb), 0.5);
-}
-
+/* ── SIZE Variants ── */
 .btn-block {
   width: 100%;
 }
 
 .btn-sm {
-  padding: 8px 16px;
-  font-size: 0.75rem;
+  padding: 10px 18px;
+  font-size: 0.72rem;
+  min-height: 38px;
 }
 
 .btn-lg {
-  padding: 16px 32px;
+  padding: 18px 36px;
   font-size: 1rem;
+  min-height: 52px;
+  letter-spacing: 2px;
 }
 
 .btn-xs {
-  padding: 6px 12px;
-  font-size: 0.7rem;
+  padding: 7px 14px;
+  font-size: 0.65rem;
+  min-height: 32px;
   letter-spacing: 0.5px;
+}
+
+/* ── LOADING State ── */
+.btn.is-loading {
+  pointer-events: none;
+  color: transparent !important;
+}
+
+.btn.is-loading::before {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: btn-spin 0.6s linear infinite;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── ACTION GRID (2x2 like CHECK/BET/FOLD layout) ── */
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.action-grid .btn {
+  width: 100%;
+  padding: 14px 12px;
+  font-size: 0.8rem;
 }
 
 /* ═══════════════════════════════════════════════════

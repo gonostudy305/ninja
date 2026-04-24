@@ -1,758 +1,776 @@
-<div class="game-board">
+<div class="game-board-container">
 
   <!-- ══ PUBLIC ANNOUNCEMENT (Mirror Monk / Martyr / Judge) ═══════ -->
   @if (s.publicAnnouncement) {
-    <div class="modal-backdrop" style="z-index:200">
-      <div class="modal-box" style="text-align:center; max-width:420px">
-        <div style="font-size:3.5rem; margin-bottom:12px">{{ s.publicAnnouncement.emoji }}</div>
-        <h2 class="modal-title">{{ s.publicAnnouncement.title }}</h2>
-        <p style="color:var(--text-dim); margin:12px 0 24px; line-height:1.6">{{ s.publicAnnouncement.message }}</p>
-        <button class="btn btn-gold" (click)="gs.dismissAnnouncement()">✅ Đã hiểu</button>
-      </div>
+  <div class="modal-backdrop" style="z-index:200">
+    <div class="modal-box" style="text-align:center; max-width:420px">
+      <div style="font-size:3.5rem; margin-bottom:12px">{{ s.publicAnnouncement.emoji }}</div>
+      <h2 class="modal-title">{{ s.publicAnnouncement.title }}</h2>
+      <p style="color:var(--text-muted); margin:12px 0 24px; line-height:1.6">{{ s.publicAnnouncement.message }}</p>
+      <button class="btn btn-gold" (click)="gs.dismissAnnouncement()">✅ Đã hiểu</button>
     </div>
+  </div>
   }
 
   <!-- ══ COVER SCREEN ══════════════════════════════════════════ -->
   @if (s.showCover) {
-    <div class="cover-screen">
-      <div class="big-emoji">🥷</div>
-      <h2>{{ s.coverMessage }}</h2>
-      <p>Những người chơi khác hãy nhìn đi chỗ khác!</p>
-      <button class="btn btn-gold btn-lg" id="btn-ready" (click)="gs.dismissCover()">
-        ✅ &nbsp; Sẵn sàng
-      </button>
-    </div>
+  <div class="cover-screen">
+    <div class="big-emoji">🥷</div>
+    <h2>{{ s.coverMessage }}</h2>
+    <p>Những người chơi khác hãy nhìn đi chỗ khác!</p>
+    <button class="btn btn-gold btn-lg" id="btn-ready" (click)="gs.dismissCover()">
+      ✅ &nbsp; Sẵn sàng
+    </button>
+  </div>
   }
 
   <!-- ══ MODAL OVERLAY ═════════════════════════════════════════ -->
   @if (s.pendingModal && (
-    (s.pendingModal.type === 'react-choice' && s.pendingModal.targetId === gs.localPlayerId()) ||
-    (s.pendingModal.type !== 'react-choice' && s.pendingModal.actorId === gs.localPlayerId())
+  (s.pendingModal.type === 'react-choice' && s.pendingModal.targetId === gs.localPlayerId()) ||
+  (s.pendingModal.type !== 'react-choice' && s.pendingModal.actorId === gs.localPlayerId())
   )) {
-    <div class="modal-backdrop">
-      <div class="modal-box">
+  <div class="modal-backdrop">
+    <div class="modal-box">
 
-        <!-- SPY RESULT -->
-        @if (s.pendingModal.type === 'spy-result') {
-          <h2 class="modal-title">👁️ Thông tin bí mật</h2>
-          <p class="modal-sub">Chỉ mình bạn nhìn thấy</p>
-          <div class="modal-card-preview">
-            <div class="house-card-visual {{ factionClass(s.pendingModal.data?.faction) }}">
-              <span class="faction-symbol">{{ s.pendingModal.data?.faction === 'crane' ? '🦢' : s.pendingModal.data?.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
-              <span class="rank-text">{{ s.pendingModal.data?.rank }}</span>
-              <span class="faction-name">{{ factionLabel(s.pendingModal.data?.faction) }}</span>
-            </div>
-            <p class="mt-16 text-dim">Hạng: <strong class="text-gold">{{ rankLabel(s.pendingModal.data?.rank) }}</strong></p>
-          </div>
-          <button class="btn btn-outline btn-block mt-24" id="btn-close-peek" (click)="gs.closePeekModal()">Đã xem xong</button>
-        }
+      <!-- SPY RESULT -->
+      @if (s.pendingModal.type === 'spy-result') {
+      <h2 class="modal-title">👁️ Thông tin bí mật</h2>
+      <p class="modal-sub">Chỉ mình bạn nhìn thấy</p>
+      <div class="modal-card-preview">
+        <div class="house-card-visual {{ factionClass(s.pendingModal.data?.faction) }}">
+          <span class="faction-symbol">{{ s.pendingModal.data?.faction === 'crane' ? '🦢' : s.pendingModal.data?.faction
+            === 'lotus' ? '🪷' : '⚔️' }}</span>
+          <span class="rank-text">{{ s.pendingModal.data?.rank }}</span>
+          <span class="faction-name">{{ factionLabel(s.pendingModal.data?.faction) }}</span>
+        </div>
+        <p class="mt-16 text-dim">Hạng: <strong class="text-gold">{{ rankLabel(s.pendingModal.data?.rank) }}</strong>
+        </p>
+      </div>
+      <button class="btn btn-outline btn-block mt-24" id="btn-close-peek" (click)="gs.closePeekModal()">Đã xem
+        xong</button>
+      }
 
-        <!-- MYSTIC PEEK -->
-        @if (s.pendingModal.type === 'mystic-peek') {
-          <h2 class="modal-title">🔮 Thông tin Nâng cao</h2>
-          <p class="modal-sub">Xem House của mục tiêu và CHỈ 1 lá bài Ninja</p>
-          <div class="modal-mystic-results">
-            <div class="house-card-visual {{ factionClass(s.pendingModal.data?.house?.faction) }}">
-              <span class="faction-symbol">{{ s.pendingModal.data?.house?.faction === 'crane' ? '🦢' : '🪷' }}</span>
-              <span class="rank-text">{{ s.pendingModal.data?.house?.rank }}</span>
-              <span class="faction-name">{{ factionLabel(s.pendingModal.data?.house?.faction) }}</span>
+      <!-- MYSTIC PEEK -->
+      @if (s.pendingModal.type === 'mystic-peek') {
+      <h2 class="modal-title">🔮 Thông tin Nâng cao</h2>
+      <p class="modal-sub">Xem House của mục tiêu và CHỈ 1 lá bài Ninja</p>
+      <div class="modal-mystic-results">
+        <div class="house-card-visual {{ factionClass(s.pendingModal.data?.house?.faction) }}">
+          <span class="faction-symbol">{{ s.pendingModal.data?.house?.faction === 'crane' ? '🦢' : '🪷' }}</span>
+          <span class="rank-text">{{ s.pendingModal.data?.house?.rank }}</span>
+          <span class="faction-name">{{ factionLabel(s.pendingModal.data?.house?.faction) }}</span>
+        </div>
+        <div class="mystic-ninja-slots mt-16">
+          <p class="text-gold mb-8 text-center" style="font-size:0.85rem">Chọn 1 lá Ninja của họ để xem:</p>
+          <div class="mini-ninja-row">
+            @for (nc of s.pendingModal.data?.ninjas; track nc.id; let i = $index) {
+            <div class="mini-ninja-tag" [class.is-revealed]="s.pendingModal.data.revealedIndex === i">
+              @if (s.pendingModal.data.revealedIndex === i) {
+              <span class="emoji">{{ nc.emoji }}</span>
+              <span class="name">{{ nc.name }} ({{ nc.phaseOrder }})</span>
+              } @else if (s.pendingModal.data.revealedIndex == null) {
+              <button class="btn btn-outline btn-xs" (click)="revealMysticNinja(i)">👁️ Xem</button>
+              } @else {
+              <span class="text-dim">🔒 Bài úp</span>
+              }
             </div>
-            <div class="mystic-ninja-slots mt-16">
-              <p class="text-gold mb-8 text-center" style="font-size:0.85rem">Chọn 1 lá Ninja của họ để xem:</p>
-              <div class="mini-ninja-row">
-                @for (nc of s.pendingModal.data?.ninjas; track nc.id; let i = $index) {
-                  <div class="mini-ninja-tag" [class.is-revealed]="s.pendingModal.data.revealedIndex === i">
-                    @if (s.pendingModal.data.revealedIndex === i) {
-                      <span class="emoji">{{ nc.emoji }}</span>
-                      <span class="name">{{ nc.name }} ({{ nc.phaseOrder }})</span>
-                    } @else if (s.pendingModal.data.revealedIndex == null) {
-                      <button class="btn btn-outline btn-xs" (click)="revealMysticNinja(i)">👁️ Xem</button>
-                    } @else {
-                      <span class="text-dim">🔒 Bài úp</span>
-                    }
-                  </div>
-                }
-              </div>
-            </div>
-            @if (s.pendingModal.data.revealedIndex !== null) {
-              @let revealedCard = s.pendingModal.data.ninjas[s.pendingModal.data.revealedIndex];
-              <div class="card-desc-block mt-16">
-                <strong class="text-gold">{{ revealedCard.name }}:</strong> 
-                <span style="color: #ffffff !important;">{{ revealedCard.description }}</span>
-              </div>
             }
           </div>
-          <button class="btn btn-outline btn-block mt-24" (click)="gs.closePeekModal()" [disabled]="s.pendingModal.data.revealedIndex === null">Đã xem xong</button>
+        </div>
+        @if (s.pendingModal.data.revealedIndex !== null) {
+        @let revealedCard = s.pendingModal.data.ninjas[s.pendingModal.data.revealedIndex];
+        <div class="card-desc-block mt-16">
+          <strong class="text-gold">{{ revealedCard.name }}:</strong>
+          <span style="color: var(--text-muted);">{{ revealedCard.description }}</span>
+        </div>
         }
+      </div>
+      <button class="btn btn-outline btn-block mt-24" (click)="gs.closePeekModal()"
+        [disabled]="s.pendingModal.data.revealedIndex === null">Đã xem xong</button>
+      }
 
-        <!-- SHAPESHIFTER -->
-        @if (s.pendingModal.type === 'shapeshifter') {
-          <h2 class="modal-title">🎭 Shapeshifter</h2>
-          <p class="modal-sub">Bạn xem thấy hai bài House này:</p>
-          <div class="modal-two-cards">
-            <div class="mini-card">
-              <p class="text-white mb-8">{{ s.pendingModal.data?.t1?.name }}</p>
-              <div class="house-card-visual {{ factionClass(s.pendingModal.data?.t1?.houseCard?.faction) }}">
-                <span class="faction-symbol" style="font-size: 3rem;">{{ s.pendingModal.data?.t1?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
-                <span class="rank-text" style="font-size: 2rem; font-weight: 900;">{{ s.pendingModal.data?.t1?.houseCard?.rank }}</span>
-                <span class="faction-name">{{ factionLabel(s.pendingModal.data?.t1?.houseCard?.faction) }}</span>
-              </div>
-            </div>
-            <div class="mini-card">
-              <p class="text-white mb-8">{{ s.pendingModal.data?.t2?.name }}</p>
-              <div class="house-card-visual {{ factionClass(s.pendingModal.data?.t2?.houseCard?.faction) }}">
-                <span class="faction-symbol" style="font-size: 3rem;">{{ s.pendingModal.data?.t2?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
-                <span class="rank-text" style="font-size: 2rem; font-weight: 900;">{{ s.pendingModal.data?.t2?.houseCard?.rank }}</span>
-                <span class="faction-name">{{ factionLabel(s.pendingModal.data?.t2?.houseCard?.faction) }}</span>
-              </div>
-            </div>
+      <!-- SHAPESHIFTER -->
+      @if (s.pendingModal.type === 'shapeshifter') {
+      <h2 class="modal-title">🎭 Shapeshifter</h2>
+      <p class="modal-sub">Bạn xem thấy hai bài House này:</p>
+      <div class="modal-two-cards">
+        <div class="mini-card">
+          <p class="text-white mb-8">{{ s.pendingModal.data?.t1?.name }}</p>
+          <div class="house-card-visual {{ factionClass(s.pendingModal.data?.t1?.houseCard?.faction) }}">
+            <span class="faction-symbol" style="font-size: 3rem;">{{ s.pendingModal.data?.t1?.houseCard?.faction ===
+              'crane' ? '🦢' : '🪷' }}</span>
+            <span class="rank-text" style="font-size: 2rem; font-weight: 900;">{{
+              s.pendingModal.data?.t1?.houseCard?.rank }}</span>
+            <span class="faction-name">{{ factionLabel(s.pendingModal.data?.t1?.houseCard?.faction) }}</span>
           </div>
-          <p class="modal-sub mt-16">Bạn có muốn hoán đổi chúng không?</p>
-          <div class="modal-actions">
-            <button class="btn btn-danger" (click)="resolveShapeshifterModal(true)">🔄 Đổi chỗ</button>
-            <button class="btn btn-outline" (click)="resolveShapeshifterModal(false)">✖ Không đổi</button>
+        </div>
+        <div class="mini-card">
+          <p class="text-white mb-8">{{ s.pendingModal.data?.t2?.name }}</p>
+          <div class="house-card-visual {{ factionClass(s.pendingModal.data?.t2?.houseCard?.faction) }}">
+            <span class="faction-symbol" style="font-size: 3rem;">{{ s.pendingModal.data?.t2?.houseCard?.faction ===
+              'crane' ? '🦢' : '🪷' }}</span>
+            <span class="rank-text" style="font-size: 2rem; font-weight: 900;">{{
+              s.pendingModal.data?.t2?.houseCard?.rank }}</span>
+            <span class="faction-name">{{ factionLabel(s.pendingModal.data?.t2?.houseCard?.faction) }}</span>
           </div>
-        }
+        </div>
+      </div>
+      <p class="modal-sub mt-16">Bạn có muốn hoán đổi chúng không?</p>
+      <div class="modal-actions">
+        <button class="btn btn-danger" (click)="resolveShapeshifterModal(true)">🔄 Đổi chỗ</button>
+        <button class="btn btn-outline" (click)="resolveShapeshifterModal(false)">✖ Không đổi</button>
+      </div>
+      }
 
-        <!-- GRAVE DIGGER INSPECT (Step 1: n face-down cards, flip 2) -->
-        @if (s.pendingModal.type === 'grave-digger-inspect') {
-          @let revealed = s.pendingModal.data.revealedIds ?? [];
-          <h2 class="modal-title">⚰️ Grave Digger</h2>
-          <p class="modal-sub">Chọn 2 lá bài đang úp để xem ({{ revealed.length }}/2):</p>
-          <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:16px;">
-            @for (card of s.pendingModal.data?.pile; track card.id) {
-              @let isFlipped = revealed.includes(card.id);
-              <div (click)="inspectGraveDiggerCard(card.id)"
-                style="display:flex; flex-direction:column; align-items:center; justify-content:center;
+      <!-- GRAVE DIGGER INSPECT -->
+      @if (s.pendingModal.type === 'grave-digger-inspect') {
+      @let revealed = s.pendingModal.data.revealedIds ?? [];
+      <h2 class="modal-title">⚰️ Grave Digger</h2>
+      <p class="modal-sub">Chọn 2 lá bài đang úp để xem ({{ revealed.length }}/2):</p>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:16px;">
+        @for (card of s.pendingModal.data?.pile; track card.id) {
+        @let isFlipped = revealed.includes(card.id);
+        <div (click)="inspectGraveDiggerCard(card.id)" style="display:flex; flex-direction:column; align-items:center; justify-content:center;
                        width:72px; height:96px; border-radius:10px; cursor:pointer;
                        border: 2px solid; transition: all 0.2s; padding:6px;"
-                [style.border-color]="isFlipped ? '#c9a84c' : 'rgba(255,255,255,0.15)'"
-                [style.background]="isFlipped ? 'rgba(201,168,76,0.15)' : 'rgba(255,255,255,0.05)'">
-                @if (isFlipped) {
-                  <span style="font-size:1.4rem">{{ card.emoji }}</span>
-                  <span style="font-size:0.65rem; color:#c9a84c; margin-top:4px; text-align:center">{{ card.name }}</span>
-                } @else {
-                  <span style="font-size:2rem">🎴</span>
-                  <span style="font-size:0.65rem; color:#ffffff; margin-top:4px">Úp</span>
-                }
-              </div>
-            }
-          </div>
-          @if (revealed.length < 2) {
-            <p style="color:#ffffff; font-size:0.8rem; margin-top:12px; text-align:center">Nhấn để lật bài (còn {{ 2 - revealed.length }} lượt)</p>
+          [style.border-color]="isFlipped ? 'rgb(var(--accent-gold-rgb))' : 'rgba(255,255,255,0.15)'"
+          [style.background]="isFlipped ? 'rgba(var(--accent-gold-rgb),0.1)' : 'rgba(255,255,255,0.05)'">
+          @if (isFlipped) {
+          <span style="font-size:1.4rem">{{ card.emoji }}</span>
+          <span style="font-size:0.65rem; color:rgb(var(--accent-gold-rgb)); margin-top:4px; text-align:center">{{
+            card.name }}</span>
+          } @else {
+          <span style="font-size:2rem">🎴</span>
+          <span style="font-size:0.65rem; color:var(--text-muted); margin-top:4px">Úp</span>
           }
+        </div>
+        }
+      </div>
+      @if (revealed.length < 2) { <p
+        style="color:var(--text-muted); font-size:0.8rem; margin-top:12px; text-align:center">Nhấn để lật bài (còn {{ 2
+        - revealed.length }} lượt)</p>
+        }
         }
 
-        <!-- GRAVE DIGGER RETRIEVE (Step 2: pick 1 of the 2 revealed) -->
+        <!-- GRAVE DIGGER RETRIEVE -->
         @if (s.pendingModal.type === 'grave-digger-retrieve') {
-          <h2 class="modal-title">⚰️ Grave Digger</h2>
-          <p class="modal-sub">Chọn 1 lá để lấy về tay:</p>
-          <div class="modal-cards-row">
-            @for (card of s.pendingModal.data?.picks; track card.id) {
-              <div class="ninja-card-visual" (click)="resolveGraveDigger(card)">
-                <div class="card-priority">{{ card.phaseOrder }}</div>
-                <span class="card-emoji">{{ card.emoji }}</span>
-                <div class="card-phase">{{ card.phase.toUpperCase() }}</div>
-                @if (card.name.toLowerCase() !== card.phase.toLowerCase().replace('-', ' ')) {
-                  <div class="card-name">{{ card.name }}</div>
-                }
-                <div class="card-desc">{{ card.description }}</div>
-              </div>
+        <h2 class="modal-title">⚰️ Grave Digger</h2>
+        <p class="modal-sub">Chọn 1 lá để lấy về tay:</p>
+        <div class="modal-cards-row">
+          @for (card of s.pendingModal.data?.picks; track card.id) {
+          <div class="ninja-card-visual" (click)="resolveGraveDigger(card)">
+            <div class="card-priority">{{ card.phaseOrder }}</div>
+            <span class="card-emoji">{{ card.emoji }}</span>
+            <div class="card-phase">{{ card.phase.toUpperCase() }}</div>
+            @if (card.name.toLowerCase() !== card.phase.toLowerCase().replace('-', ' ')) {
+            <div class="card-name">{{ card.name }}</div>
             }
+            <div class="card-desc">{{ card.description }}</div>
           </div>
-          <button class="btn btn-outline btn-block mt-24" (click)="resolveGraveDigger(null)">Không lấy</button>
+          }
+        </div>
+        <button class="btn btn-outline btn-block mt-24" (click)="resolveGraveDigger(null)">Không lấy</button>
         }
 
         <!-- TROUBLEMAKER -->
         @if (s.pendingModal.type === 'troublemaker') {
-          <h2 class="modal-title">😈 Troublemaker</h2>
-          <p class="modal-sub">Bạn thấy bài của họ:</p>
-          <div class="modal-card-preview">
-            <div class="house-card-visual {{ factionClass(s.pendingModal.data?.faction) }}">
-              <span class="faction-symbol">{{ s.pendingModal.data?.faction === 'crane' ? '🦢' : '🪷' }}</span>
-              <span class="rank-text">{{ s.pendingModal.data?.rank }}</span>
-              <span class="faction-name">{{ factionLabel(s.pendingModal.data?.faction) }}</span>
-            </div>
+        <h2 class="modal-title">😈 Troublemaker</h2>
+        <p class="modal-sub">Bạn thấy bài của họ:</p>
+        <div class="modal-card-preview">
+          <div class="house-card-visual {{ factionClass(s.pendingModal.data?.faction) }}">
+            <span class="faction-symbol">{{ s.pendingModal.data?.faction === 'crane' ? '🦢' : '🪷' }}</span>
+            <span class="rank-text">{{ s.pendingModal.data?.rank }}</span>
+            <span class="faction-name">{{ factionLabel(s.pendingModal.data?.faction) }}</span>
           </div>
-          <p class="modal-sub mt-16">Tiết lộ cho cả bàn?</p>
-          <div class="modal-actions">
-            <button class="btn btn-danger" (click)="resolveTroublemaker(true)">📢 Tiết lộ!</button>
-            <button class="btn btn-outline" (click)="resolveTroublemaker(false)">🤫 Giữ bí mật</button>
-          </div>
+        </div>
+        <p class="modal-sub mt-16">Tiết lộ cho cả bàn?</p>
+        <div class="modal-actions">
+          <button class="btn btn-danger" (click)="resolveTroublemaker(true)">📢 Tiết lộ!</button>
+          <button class="btn btn-outline" (click)="resolveTroublemaker(false)">🤫 Giữ bí mật</button>
+        </div>
         }
 
         <!-- SPIRIT MERCHANT -->
         @if (s.pendingModal.type === 'spirit-merchant') {
-          @let victim = s.pendingModal.data?.target;
-          @let me = s.pendingModal.data?.actor;
-          <h2 class="modal-title">⚖️ Spirit Merchant</h2>
+        @let victim = s.pendingModal.data?.target;
+        @let me = s.pendingModal.data?.actor;
+        <h2 class="modal-title">⚖️ Spirit Merchant</h2>
 
-          <!-- Peek: House Card -->
-          @if (s.pendingModal.data?.peekMode === 'house') {
-            <p class="modal-sub">Bài Gia Tộc của họ:</p>
-            <div class="modal-card-preview">
-              <div class="house-card-visual {{ factionClass(victim?.houseCard?.faction) }}">
-                <span class="faction-symbol">{{ victim?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
-                <span class="rank-text">{{ victim?.houseCard?.rank }}</span>
-                <span class="faction-name">{{ factionLabel(victim?.houseCard?.faction) }}</span>
-              </div>
-            </div>
-          }
-
-          <!-- Peek: Token -->
-          @if (s.pendingModal.data?.peekMode === 'token') {
-            <p class="modal-sub">Mục tiêu có <strong class="text-gold">{{ s.pendingModal.data?.targetTokenCount }}</strong> Token.</p>
-            <p style="font-size:0.75rem; color:#ffffff; margin-bottom:8px">Chọn 1 Token đang úp của họ để xem:</p>
-            
-            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px">
-              @for (t of victim?.tokens; track $index; let ti = $index) {
-                <div class="token-slot-mini" [class.selected]="spiritMerchantTargetTokenIdx === ti" (click)="spiritMerchantTargetTokenIdx = ti">
-                  <span class="coin-icon">🪙</span>
-                  @if (spiritMerchantTargetTokenIdx === ti) {
-                    <span class="token-val-dim">{{ t }}</span>
-                  }
-                </div>
-              }
-            </div>
-
-            @if (spiritMerchantTargetTokenIdx >= 0) {
-              <!-- Swap section -->
-              @if (me?.tokens?.length > 0) {
-                <p class="modal-sub mt-16" style="font-size:0.85rem">Bạn có muốn hoán đổi?</p>
-                <p style="font-size:0.75rem; color:#ffffff; margin-bottom:8px">Chọn 1 Token của bạn để đưa cho họ:</p>
-                <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px">
-                  @for (myT of me?.tokens; track $index; let ai = $index) {
-                    <div class="token-slot-mini" [class.selected]="spiritMerchantActorTokenIdx === ai" (click)="spiritMerchantActorTokenIdx = ai">
-                      <span class="coin-icon">🪙</span>
-                      <span class="token-val-dim">{{ myT }}</span>
-                    </div>
-                  }
-                </div>
-                
-                <button class="btn btn-gold btn-block mt-24" 
-                        [disabled]="spiritMerchantActorTokenIdx < 0"
-                        (click)="resolveSpiritMerchant(spiritMerchantTargetTokenIdx)">
-                  🔄 ĐỔI TOKEN NÀY
-                </button>
-              } @else {
-                <p class="text-dim mt-16" style="font-size:0.85rem">Bạn không có Token nào để đổi.</p>
-              }
-            }
-            <button class="btn btn-outline btn-block mt-16" (click)="resolveSpiritMerchant(-1)">BỎ QUA, KHÔNG ĐỔI</button>
-          }
-
-          @if (s.pendingModal.data?.peekMode === 'house') {
-            <button class="btn btn-outline btn-block mt-16" (click)="resolveSpiritMerchant(-1)">Xong</button>
-          }
+        @if (s.pendingModal.data?.peekMode === 'house') {
+        <p class="modal-sub">Bài Gia Tộc của họ:</p>
+        <div class="modal-card-preview">
+          <div class="house-card-visual {{ factionClass(victim?.houseCard?.faction) }}">
+            <span class="faction-symbol">{{ victim?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
+            <span class="rank-text">{{ victim?.houseCard?.rank }}</span>
+            <span class="faction-name">{{ factionLabel(victim?.houseCard?.faction) }}</span>
+          </div>
+        </div>
         }
 
-        <!-- THIEF (Secret Stealing) -->
-        @if (s.pendingModal.type === 'thief') {
-          <h2 class="modal-title">🗡️ Thief</h2>
-          
-          @if (!selectedTargetId) {
-            <p class="modal-sub">Trộm 1 Token ngẫu nhiên (chọn nạn nhân):</p>
-            <div class="target-list">
-              @for (p of s.pendingModal.data?.victims; track p.id) {
-                <button class="target-btn" (click)="selectTarget(p.id)">
-                  {{ p.name }} (Có {{ p.tokens.length }} Tokens)
-                </button>
-              }
-            </div>
-            <button class="btn btn-outline btn-block mt-16" (click)="resolveThief('', -1)">Bỏ qua</button>
-          } @else {
-            @let victim = s.players | playerById: selectedTargetId;
-            <p class="modal-sub">Đang trộm từ <strong>{{ victim?.name }}</strong>. Chọn 1 lá Token đang úp:</p>
-            <div class="modal-discard-grid mt-16">
-              @for (t of victim?.tokens; track $index; let i = $index) {
-                <div class="mini-ninja-tag clickable" (click)="resolveThief(selectedTargetId, i)">
-                  <span>🪙</span>
-                  <span>Token úp</span>
-                </div>
-              }
-            </div>
-            <button class="btn btn-outline btn-block mt-16" (click)="selectTarget('')">Quay lại</button>
+        @if (s.pendingModal.data?.peekMode === 'token') {
+        <p class="modal-sub">Mục tiêu có <strong class="text-gold">{{ s.pendingModal.data?.targetTokenCount }}</strong>
+          Token.</p>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px">Chọn 1 Token đang úp của họ để xem:</p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px">
+          @for (t of victim?.tokens; track $index; let ti = $index) {
+          <div class="token-slot-mini" [class.selected]="spiritMerchantTargetTokenIdx === ti"
+            (click)="spiritMerchantTargetTokenIdx = ti">
+            <span class="coin-icon">🪙</span>
+            @if (spiritMerchantTargetTokenIdx === ti) {
+            <span class="token-val-dim">{{ t }}</span>
+            }
+          </div>
           }
+        </div>
+
+        @if (spiritMerchantTargetTokenIdx >= 0) {
+        @if (me?.tokens?.length > 0) {
+        <p class="modal-sub mt-16" style="font-size:0.85rem">Bạn có muốn hoán đổi?</p>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px">Chọn 1 Token của bạn để đưa cho họ:</p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px">
+          @for (myT of me?.tokens; track $index; let ai = $index) {
+          <div class="token-slot-mini" [class.selected]="spiritMerchantActorTokenIdx === ai"
+            (click)="spiritMerchantActorTokenIdx = ai">
+            <span class="coin-icon">🪙</span>
+            <span class="token-val-dim">{{ myT }}</span>
+          </div>
+          }
+        </div>
+        <button class="btn btn-gold btn-block mt-24" [disabled]="spiritMerchantActorTokenIdx < 0"
+          (click)="resolveSpiritMerchant(spiritMerchantTargetTokenIdx)">
+          🔄 ĐỔI TOKEN NÀY
+        </button>
+        } @else {
+        <p class="text-dim mt-16" style="font-size:0.85rem">Bạn không có Token nào để đổi.</p>
+        }
+        }
+        <button class="btn btn-outline btn-block mt-16" (click)="resolveSpiritMerchant(-1)">BỎ QUA, KHÔNG ĐỔI</button>
+        }
+
+        @if (s.pendingModal.data?.peekMode === 'house') {
+        <button class="btn btn-outline btn-block mt-16" (click)="resolveSpiritMerchant(-1)">Xong</button>
+        }
+        }
+
+        <!-- THIEF -->
+        @if (s.pendingModal.type === 'thief') {
+        <h2 class="modal-title">🗡️ Thief</h2>
+        @if (!selectedTargetId) {
+        <p class="modal-sub">Trộm 1 Token ngẫu nhiên (chọn nạn nhân):</p>
+        <div class="target-list">
+          @for (p of s.pendingModal.data?.victims; track p.id) {
+          <button class="target-btn" (click)="selectTarget(p.id)">
+            {{ p.name }} (Có {{ p.tokens.length }} Tokens)
+          </button>
+          }
+        </div>
+        <button class="btn btn-outline btn-block mt-16" (click)="resolveThief('', -1)">Bỏ qua</button>
+        } @else {
+        @let victim = s.players | playerById: selectedTargetId;
+        <p class="modal-sub">Đang trộm từ <strong>{{ victim?.name }}</strong>. Chọn 1 lá Token đang úp:</p>
+        <div class="modal-discard-grid mt-16">
+          @for (t of victim?.tokens; track $index; let i = $index) {
+          <div class="mini-ninja-tag clickable" (click)="resolveThief(selectedTargetId, i)">
+            <span>🪙</span>
+            <span>Token úp</span>
+          </div>
+          }
+        </div>
+        <button class="btn btn-outline btn-block mt-16" (click)="selectTarget('')">Quay lại</button>
+        }
         }
 
         <!-- SHINOBI PEEK -->
         @if (s.pendingModal.type === 'shinobi-peek') {
-          <h2 class="modal-title">🥷 Shinobi</h2>
-          <p class="modal-sub">Bạn nhìn thấy bài House của mục tiêu:</p>
-          <div class="modal-card-preview">
-            <div class="house-card-visual {{ factionClass(s.pendingModal.data?.faction) }}">
-              <span class="faction-symbol">{{ s.pendingModal.data?.faction === 'crane' ? '🦢' : s.pendingModal.data?.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
-              <span class="rank-text">{{ s.pendingModal.data?.rank }}</span>
-              <span class="faction-name">{{ factionLabel(s.pendingModal.data?.faction) }}</span>
-            </div>
+        <h2 class="modal-title">🥷 Shinobi</h2>
+        <p class="modal-sub">Bạn nhìn thấy bài House của mục tiêu:</p>
+        <div class="modal-card-preview">
+          <div class="house-card-visual {{ factionClass(s.pendingModal.data?.faction) }}">
+            <span class="faction-symbol">{{ s.pendingModal.data?.faction === 'crane' ? '🦢' :
+              s.pendingModal.data?.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
+            <span class="rank-text">{{ s.pendingModal.data?.rank }}</span>
+            <span class="faction-name">{{ factionLabel(s.pendingModal.data?.faction) }}</span>
           </div>
-          <p class="modal-sub mt-16">Bạn có muốn giết họ không?</p>
-          <div class="modal-actions">
-            <button class="btn btn-danger" (click)="shinobiDecide(true)">🗡️ Giết!</button>
-            <button class="btn btn-outline" (click)="shinobiDecide(false)">🕊️ Tha</button>
-          </div>
+        </div>
+        <p class="modal-sub mt-16">Bạn có muốn giết họ không?</p>
+        <div class="modal-actions">
+          <button class="btn btn-danger" (click)="shinobiDecide(true)">🗡️ Giết!</button>
+          <button class="btn btn-outline" (click)="shinobiDecide(false)">🕊️ Tha</button>
+        </div>
         }
 
-        <!-- REACT CHOICE (Mirror Monk only) -->
+        <!-- REACT CHOICE (Mirror Monk) -->
         @if (s.pendingModal.type === 'react-choice') {
-          <h2 class="modal-title">⚡ Bạn đang bị tấn công!</h2>
-          <p class="modal-sub">Bạn có lá <strong style="color:var(--gold)">Mirror Monk</strong>.<br>Có muốn phản đòn tiêu diệt ngược lại kẻ tấn công không?</p>
-          <div class="modal-cards-row">
-            @for (card of s.pendingModal.data?.reactCards; track card.id) {
-              <div class="ninja-card-visual" (click)="resolveReact(card.id)">
-                <div class="card-priority">{{ card.phaseOrder }}</div>
-                <span class="card-emoji">{{ card.emoji }}</span>
-                <div class="card-phase">{{ card.phase.toUpperCase() }}</div>
-                @if (card.name.toLowerCase() !== card.phase.toLowerCase().replace('-', ' ')) {
-                  <div class="card-name">{{ card.name }}</div>
-                }
-                <div class="card-desc">{{ card.description }}</div>
-              </div>
+        <h2 class="modal-title">⚡ Bạn đang bị tấn công!</h2>
+        <p class="modal-sub">Bạn có lá <strong style="color:rgb(var(--accent-gold-rgb))">Mirror Monk</strong>.<br>Có
+          muốn phản đòn tiêu diệt ngược lại kẻ tấn công không?</p>
+        <div class="modal-cards-row">
+          @for (card of s.pendingModal.data?.reactCards; track card.id) {
+          <div class="ninja-card-visual" (click)="resolveReact(card.id)">
+            <div class="card-priority">{{ card.phaseOrder }}</div>
+            <span class="card-emoji">{{ card.emoji }}</span>
+            <div class="card-phase">{{ card.phase.toUpperCase() }}</div>
+            @if (card.name.toLowerCase() !== card.phase.toLowerCase().replace('-', ' ')) {
+            <div class="card-name">{{ card.name }}</div>
             }
+            <div class="card-desc">{{ card.description }}</div>
           </div>
-          <button class="btn btn-outline btn-block mt-16" (click)="resolveReact(null)">💀 Chấp nhận cái chết</button>
+          }
+        </div>
+        <button class="btn btn-outline btn-block mt-16" (click)="resolveReact(null)">💀 Chấp nhận cái chết</button>
         }
 
-      </div>
     </div>
+  </div>
   }
 
-  <!-- ══ TOP BAR ════════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN GAME LAYOUT (3-Row Grid: TopBar / Arena / Dashboard)
+       ══════════════════════════════════════════════════════════════ -->
   @if (!s.showCover) {
-    <header class="top-bar">
-      <div class="round-badge">Vòng {{ s.round }}</div>
-      <div class="phase-indicator">{{ phaseLabel(s.phase) }}</div>
-      <div class="honor-stack">💰 Kho Token</div>
-    </header>
 
-    <div class="left-panels-container">
-      <!-- YOUR INFO PANEL -->
-      @if (!s.phase.startsWith('end') && !s.phase.startsWith('game') && !s.phase.startsWith('lobby')) {
-        @let me = localPlayer();
-        <div class="your-info-panel">
-          <p class="side-label">Nhân vật của bạn ({{ me?.name }}):</p>
-          <div class="info-content">
-            @if (me?.needsHouseReview) {
-              <div class="house-mini" style="background: var(--bg-dark); border: 1px solid var(--border); box-shadow: none;">
-                <span>❓</span>
-                <span class="text-dim">Bí ẩn</span>
+  <!-- ══ ROW 1: TOP BAR ════════════════════════════════════════ -->
+  <header class="poker-top-bar">
+    <div class="bar-left">
+      <span class="round-badge">VÒNG {{ s.round }}</span>
+      <span class="phase-indicator">{{ phaseLabel(s.phase) }}</span>
+    </div>
+    <div class="bar-center">
+      <span class="table-branding">NIGHT OF THE NINJA</span>
+    </div>
+    <div class="bar-right">
+      <span class="pool-display">💰 Kho Token</span>
+    </div>
+  </header>
+
+  <!-- ══ ROW 2: GAME ARENA ═════════════════════════════════════ -->
+  <main class="game-arena">
+
+    <!-- ── THE POKER TABLE + PLAYER SEATS ── -->
+    <div class="poker-table-wrapper">
+      <div class="poker-table">
+        <div class="table-felt">
+
+          <!-- CENTER: Phase-specific content or logo -->
+          <div class="center-community">
+
+            <!-- HOUSE VIEWING -->
+            @if (s.phase === 'house-viewing') {
+            @let me = localPlayer();
+            @let iHaveViewed = s.houseViewedIds.includes(gs.localPlayerId() ?? '');
+            @if (!iHaveViewed) {
+            <div class="table-phase-content">
+              <p class="table-instruction">Bài Gia Tộc của <strong class="text-gold">{{ me?.name }}</strong></p>
+              <div class="house-card-visual {{ factionClass(me?.houseCard?.faction) }}">
+                <span class="faction-symbol">{{ me?.houseCard?.faction === 'crane' ? '🦢' : me?.houseCard?.faction ===
+                  'lotus' ? '🪷' : '⚔️' }}</span>
+                <span class="rank-text">{{ me?.houseCard?.rank }}</span>
+                <span class="faction-name">{{ factionLabel(me?.houseCard?.faction) }}</span>
               </div>
-              <p class="text-dim mt-8" style="font-size: 0.75rem; text-align: center;">Bạn đã bị Shapeshifter nhắm mục tiêu (hoán đổi hoặc không). Phe của bạn hiện là một ẩn số!</p>
+              <p class="mt-8 text-dim" style="font-size:0.8rem">Hạng: <strong class="text-gold">{{
+                  rankLabel(me?.houseCard?.rank ?? 0) }}</strong></p>
+              <button class="btn btn-gold mt-16" id="btn-done-viewing" (click)="doneViewing()">✅ Đã ghi nhớ</button>
+            </div>
             } @else {
-              <div class="house-mini {{ factionClass(me?.houseCard?.faction) }}">
-                <span>{{ me?.houseCard?.faction === 'crane' ? '🦢' : me?.houseCard?.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
-                <span>Hạng {{ me?.houseCard?.rank }}</span>
-              </div>
-            }
-
-            <div class="mini-ninja-row mt-8">
-              @for (nc of me ? getUnusedNinjaCards(me) : []; track nc.id) {
-                <div class="mini-ninja-tag">
-                  <span>{{ nc.emoji }}</span>
-                  <span>{{ nc.name }} ({{ nc.phaseOrder }})</span>
-                </div>
-              }
-            </div>
-          </div>
-        </div>
-      }
-
-      <!-- SIDEBAR: PARTICIPANTS -->
-      @if (s.phase.startsWith('night-')) {
-        <div class="participants-sidebar">
-          <p class="side-label">Pha: <span class="text-gold">{{ s.phase.replace('night-', '').toUpperCase() }}</span></p>
-          <div class="side-list">
-            @for (qi of currentPhaseQueueItems(); track $index) {
-              @let p = s.players | playerById: qi.playerId;
-              @if (p) {
-                <div class="side-chip" [class.is-acting]="qi === currentNightQueueItem()">
-                  <span class="avatar">{{ p.name[0] }}</span>
-                  <span class="name">
-                    <span class="text-dim">{{ p.name }}:</span> 
-                    <strong class="text-gold" style="margin-left: 4px;">{{ qi.card.phaseOrder }}</strong>
-                  </span>
-                </div>
-              }
-            }
-          </div>
-        </div>
-      }
-
-      <!-- TOKEN HISTORY PANEL -->
-      @if (!s.phase.startsWith('end') && !s.phase.startsWith('game') && !s.phase.startsWith('lobby')) {
-        @let me = localPlayer();
-        @if (me?.tokenHistory?.length) {
-          <div class="token-history-panel">
-            <p class="side-label">Lịch sử cộng xu</p>
-            @for (h of me!.tokenHistory; track $index) {
-              <div style="font-size: 0.75rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
-                <span style="color: #ffffff;">Trận {{ h.round }}{{ h.reason ? ' (' + h.reason + ')' : '' }}:</span>
-                <span [class.text-gold]="h.amount > 0" [class.text-danger]="h.amount < 0" style="font-weight: bold;">{{ h.amount > 0 ? '+' : '' }}{{ h.amount }}</span>
-              </div>
-            }
-          </div>
-        }
-      }
-    </div>
-
-    <!-- SCOREBOARD -->
-    <div class="scoreboard">
-      @for (p of s.players; track p.id) {
-        <div class="score-chip" [class.dead]="!p.isAlive" [class.local-player]="p.id === gs.localPlayerId()">
-          <span class="score-name">{{ p.name }}</span>
-          @if (p.isHouseRevealed && p.houseCard) {
-            <span class="badge badge-{{ p.houseCard.faction }}">{{ factionLabel(p.houseCard.faction) }}</span>
-          }
-          <div class="score-tokens">
-            @for (t of p.tokens; track $index) {
-              <span class="token-slot">🪙</span>
-            }
-          </div>
-          <span class="score-honor">
-            @if (p.tokens.length > 0) {
-              @if (p.id === gs.localPlayerId()) {
-                <span class="text-gold">{{ getPlayerScore(p) }}đ</span>
-              } @else {
-                <span class="text-dim">? đ</span>
-              }
-            }
-          </span>
-          <!-- Số lá bài Ninja còn lại -->
-          <span class="badge" style="background: rgba(255,255,255,0.1); font-size: 0.75rem;">🎴 {{ getRemainingNinjaCount(p) }}</span>
-          @if (!p.isAlive) { <span class="dead-icon">💀</span> }
-        </div>
-      }
-    </div>
-
-    <!-- END INFO PANELS -->
-
-    <!-- ══ ACTIVITY LOG ════════════════════════════════════════ -->
-    @if (s.actionLog.length > 0 && s.phase.startsWith('night-')) {
-      <div class="activity-log-panel">
-        <p class="side-label" style="margin-bottom: 8px;">📜 Nhật Ký Hoạt Động</p>
-        <div class="activity-log-list" id="activity-log-list">
-          @for (entry of s.actionLog; track $index) {
-            @let parts = entry.message.split(' | ');
-            <div class="activity-entry">
-              <span class="activity-action">{{ parts[0] }}</span>
-              @if (parts.length > 1) {
-                <span class="activity-desc">{{ parts[1] }}</span>
-              }
-            </div>
-          }
-        </div>
-      </div>
-    }
-
-    <!-- ══ HOUSE VIEWING ══════════════════════════════════════ -->
-    @if (s.phase === 'house-viewing') {
-      @let me = localPlayer();
-      @let iHaveViewed = s.houseViewedIds.includes(gs.localPlayerId() ?? '');
-      <div class="phase-view">
-        <div class="phase-banner">
-          <div class="phase-title">🏠 Xem Bài Gia Tộc</div>
-        </div>
-        <div class="content-center">
-          @if (!iHaveViewed) {
-            <p class="instruction">Chỉ mình <strong class="text-gold">{{ me?.name }}</strong> được xem!</p>
-            <div class="house-card-visual {{ factionClass(me?.houseCard?.faction) }}">
-              <span class="faction-symbol">{{ me?.houseCard?.faction === 'crane' ? '🦢' : me?.houseCard?.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
-              <span class="rank-text">{{ me?.houseCard?.rank }}</span>
-              <span class="faction-name">{{ factionLabel(me?.houseCard?.faction) }}</span>
-            </div>
-            <p class="mt-16 text-center text-dim">Hạng: <strong class="text-gold">{{ rankLabel(me?.houseCard?.rank ?? 0) }}</strong></p>
-            <button class="btn btn-gold mt-24" id="btn-done-viewing" (click)="doneViewing()">✅ Đã ghi nhớ</button>
-          } @else {
-            <p class="instruction text-gold">✅ Bạn đã xem xong!</p>
-            <p class="text-dim mt-8">Đang chờ người khác xem bài... ({{ s.houseViewedIds.length }}/{{ s.players.length }})</p>
-            <div class="waiting-list mt-16" style="background: rgba(0,0,0,0.3); border-radius: var(--radius); padding: 16px; min-width: 200px;">
-              @for (p of s.players; track p.id) {
-                <div class="flex justify-between items-center mb-8">
-                  <span class="text-white">{{ p.name }}</span>
+            <div class="table-phase-content">
+              <p class="text-gold" style="font-size:1.1rem">✅ Bạn đã xem xong!</p>
+              <p class="text-dim mt-8" style="font-size:0.85rem">Đang chờ người khác... ({{ s.houseViewedIds.length
+                }}/{{ s.players.length }})</p>
+              <div class="waiting-mini mt-16">
+                @for (p of s.players; track p.id) {
+                <div class="wait-row">
+                  <span>{{ p.name }}</span>
                   <span>{{ s.houseViewedIds.includes(p.id) ? '✅' : '⏳' }}</span>
                 </div>
+                }
+              </div>
+            </div>
+            }
+            }
+
+            <!-- DRAFT PHASES -->
+            @else if (s.phase === 'draft-pick1' || s.phase === 'draft-pick2') {
+            <div class="table-phase-content">
+              <p class="table-instruction">{{ s.phase === 'draft-pick1' ? '🃏 Chọn 1 lá (Giữ)' : '🃏 Chọn 1 lá từ 2 lá'
+                }}</p>
+            </div>
+            }
+
+            <!-- NIGHT PHASES: Show phase info on the table -->
+            @else if (s.phase.startsWith('night-')) {
+            @let actor = currentNightActor();
+            @let card = currentNightCard();
+            <div class="table-phase-content">
+              <div class="phase-icon-display">
+                <span class="phase-emoji">{{ card?.emoji ?? '🌙' }}</span>
+              </div>
+              <p class="phase-name-display">{{ phaseLabel(s.phase) }}</p>
+              <p class="phase-actor-display">
+                <span class="text-gold">{{ actor?.name }}</span>
+                <span class="ninja-badge">
+                  <span class="badge-num">{{ card?.phaseOrder }}</span>
+                  {{ card?.name }}
+                </span>
+              </p>
+            </div>
+            }
+
+            <!-- END ROUND -->
+            @else if (s.phase === 'end-round') {
+            <div class="table-phase-content">
+              @if (s.roundWinnerFaction) {
+              <div class="winner-announcement">
+                <span class="winner-emblem">{{ s.roundWinnerFaction === 'crane' ? '🦢' : '🪷' }}</span>
+                <h2 class="text-gold">Phe {{ s.roundWinnerFaction.toUpperCase() }} thắng!</h2>
+                <p class="text-dim">{{ s.roundWinnerName }} có hạng cao nhất</p>
+              </div>
+              } @else {
+              <div class="winner-announcement">
+                <span class="winner-emblem">💀</span>
+                <h2 class="text-gold">Không có người sống sót!</h2>
+              </div>
               }
             </div>
-          }
+            }
+
+            <!-- DEFAULT: Table logo -->
+            @else {
+            <div class="table-logo-text">NIGHT OF THE NINJA</div>
+            }
+
+          </div>
         </div>
       </div>
-    }
 
-    <!-- ══ DRAFT PHASE ════════════════════════════════════════ -->
-    @if (s.phase === 'draft-pick1' || s.phase === 'draft-pick2') {
+      <!-- PLAYER SEATS (positioned around the oval) -->
+      @for (p of s.players; track p.id; let i = $index) {
+      <div class="player-seat seat-{{ i }}" [class.is-local]="p.id === gs.localPlayerId()" [class.is-dead]="!p.isAlive"
+        [class.is-acting]="isCurrentActor(p.id)">
+
+        <div class="avatar-wrapper">
+          <div class="avatar-circle" [class.local]="p.id === gs.localPlayerId()" [class.dead]="!p.isAlive">
+            <span class="avatar-initial">{{ p.name[0] }}</span>
+          </div>
+          @if (!p.isAlive) {
+          <span class="dead-marker">💀</span>
+          }
+          @if (p.isHouseRevealed && p.houseCard) {
+          <span class="faction-dot badge-{{ p.houseCard.faction }}">
+            {{ p.houseCard.faction === 'crane' ? '🦢' : p.houseCard.faction === 'lotus' ? '🪷' : '⚔️' }}
+          </span>
+          }
+        </div>
+
+        <span class="player-name-label">{{ p.name }}</span>
+        <span class="player-chip-count">🪙 {{ p.tokens.length }} · 🎴 {{ getRemainingNinjaCount(p) }}</span>
+
+        @if (isCurrentActor(p.id)) {
+        <div class="acting-glow"></div>
+        }
+      </div>
+      }
+
+    </div>
+
+    <!-- ── PHASE-SPECIFIC PANELS (beside the table) ── -->
+    <div class="arena-side-panel">
+
+      <!-- DRAFT: Card selection UI -->
+      @if (s.phase === 'draft-pick1' || s.phase === 'draft-pick2') {
       @let me = localPlayer();
       @let myHand = me?.draftHand ?? [];
       @let iHavePicked = s.draftPickedIds.includes(gs.localPlayerId() ?? '');
-      <div class="phase-view">
-        <div class="phase-banner">
-          <div class="phase-title">{{ s.phase === 'draft-pick1' ? '🃏 Chọn 1 lá (Giữ) — 2 lá còn lại luân chuyển' : '🃏 Chọn 1 lá từ 2 lá nhận được' }}</div>
-        </div>
-        <div class="content-center">
-          <p class="instruction">Người chơi: <strong class="text-gold">{{ me?.name }}</strong></p>
-          @if (!iHavePicked && myHand.length > 0) {
-            <div class="draft-cards">
-              @for (card of myHand; track card.id; let i = $index) {
-                <div class="ninja-card-visual" [class.selected]="selectedCardIndex === i" (click)="selectCard(i)">
-                  <div class="card-priority">{{ card.phaseOrder }}</div>
-                  <span class="card-emoji">{{ card.emoji }}</span>
-                  <div class="card-phase">{{ card.phase.toUpperCase() }}</div>
-                  @if (card.name.toLowerCase() !== card.phase.toLowerCase().replace('-', ' ')) {
-                    <div class="card-name">{{ card.name }}</div>
-                  }
-                  <div class="card-desc">{{ card.description }}</div>
-                </div>
-              }
-            </div>
-            <button class="btn btn-gold mt-24" [disabled]="selectedCardIndex === null" (click)="confirmDraftPick()">
-              ✅ Xác nhận chọn
-            </button>
-          } @else if (iHavePicked) {
-            <p class="instruction text-gold mt-24">✅ Bạn đã chọn xong!</p>
-            <p class="text-dim mt-8">Đang chờ người khác... ({{ s.draftPickedIds.length }}/{{ s.players.length }})</p>
-            <div class="waiting-list mt-16" style="background:rgba(0,0,0,0.3);border-radius:var(--radius);padding:16px;min-width:200px;">
-              @for (p of s.players; track p.id) {
-                <div class="flex justify-between items-center mb-8">
-                  <span class="text-white">{{ p.name }}</span>
-                  <span>{{ s.draftPickedIds.includes(p.id) ? '✅' : '⏳' }}</span>
-                </div>
-              }
-            </div>
-          } @else {
-            <p class="text-dim mt-24">Đang chờ nhận bài...</p>
+      @if (!iHavePicked && myHand.length > 0) {
+      <div class="side-panel-content">
+        <p class="panel-instruction">Chọn cho <strong class="text-gold">{{ me?.name }}</strong></p>
+        <div class="draft-cards">
+          @for (card of myHand; track card.id; let i = $index) {
+          <div class="ninja-card-visual" [class.selected]="selectedCardIndex === i" (click)="selectCard(i)">
+            <div class="card-priority">{{ card.phaseOrder }}</div>
+            <span class="card-emoji">{{ card.emoji }}</span>
+            <div class="card-phase">{{ card.phase.toUpperCase() }}</div>
+            @if (card.name.toLowerCase() !== card.phase.toLowerCase().replace('-', ' ')) {
+            <div class="card-name">{{ card.name }}</div>
+            }
+            <div class="card-desc">{{ card.description }}</div>
+          </div>
           }
         </div>
+        <button class="btn btn-gold mt-16" [disabled]="selectedCardIndex === null" (click)="confirmDraftPick()">
+          ✅ Xác nhận chọn
+        </button>
       </div>
-    }
+      } @else if (iHavePicked) {
+      <div class="side-panel-content text-center">
+        <p class="text-gold">✅ Bạn đã chọn xong!</p>
+        <p class="text-dim mt-8">Đang chờ... ({{ s.draftPickedIds.length }}/{{ s.players.length }})</p>
+      </div>
+      } @else {
+      <div class="side-panel-content text-center">
+        <p class="text-dim">Đang chờ nhận bài...</p>
+      </div>
+      }
+      }
 
-    <!-- ══ NIGHT PHASES ═══════════════════════════════════════ -->
-    @if (s.phase === 'night-spy' || s.phase === 'night-mystic') {
+      <!-- NIGHT PHASES: Target selection UI -->
+      @if (s.phase === 'night-spy' || s.phase === 'night-mystic') {
       @let actor = currentNightActor();
-      @let card = currentNightCard();
-      <div class="phase-view">
-        <div class="phase-banner">
-          <div class="phase-title">{{ phaseLabel(s.phase) }} (SỐ {{ card?.phaseOrder }})</div>
-        </div>
-        <div class="content-center">
-          <div class="actor-info">
-            <span class="text-gold">{{ actor?.name }}</span> sử dụng
-            <span class="ninja-badge">
-              <span class="badge-num">{{ card?.phaseOrder }}</span>
-              {{ card?.emoji }} {{ card?.name }}
-            </span>
-          </div>
-          @if (actor?.id === gs.localPlayerId()) {
-            <p class="instruction mt-16">Chọn người để xem bài:</p>
-            <div class="target-list">
-              @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
-                <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">
-                  {{ p.name }}
-                  @if (p.isHouseRevealed && p.houseCard) { <span class="badge badge-{{ p.houseCard.faction }}">{{ factionLabel(p.houseCard.faction) }}</span> }
-                </button>
-              }
-            </div>
-            <div class="action-row mt-24">
-              <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="confirmSpyAction()">🔍 Thực hiện</button>
-              <button class="btn btn-outline" (click)="gs.skipNightAction()">Bỏ qua</button>
-            </div>
-          } @else {
-            <p class="text-dim mt-24">Đang đợi họ hành động...</p>
-          }
-        </div>
-      </div>
-    }
-
-    @if (s.phase === 'night-trickster') {
-      @let actor = currentNightActor();
-      @let card = currentNightCard();
-      <div class="phase-view">
-        <div class="phase-banner">
-          <div class="phase-title">🎭 Pha Trickster — Số {{ card?.phaseOrder }} ({{ card?.name }})</div>
-        </div>
-        <div class="content-center">
-          <div class="actor-info">
-            <span class="text-gold">{{ actor?.name }}</span> dùng
-            <span class="ninja-badge">
-              <span class="badge-num">{{ card?.phaseOrder }}</span>
-              {{ card?.emoji }} {{ card?.name }}
-            </span>
-          </div>
-          <div class="card-desc-block mt-16">{{ card?.description }}</div>
-          
-          @if (actor?.id === gs.localPlayerId()) {
-            @if (card?.tricksterNumber === 1) {
-              <p class="instruction mt-16">Chọn Mục tiêu 1:</p>
-              <div class="target-list">
-                @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
-                  <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">{{ p.name }}</button>
-                }
-              </div>
-              <p class="instruction mt-12">Chọn Mục tiêu 2:</p>
-              <div class="target-list">
-                @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
-                  @if (p.id !== selectedTargetId) {
-                    <button class="target-btn" [class.selected]="selected2ndTargetId === p.id" (click)="selectTarget2(p.id)">{{ p.name }}</button>
-                  }
-                }
-              </div>
-            }
-
-            @if (card?.tricksterNumber === 3 || card?.tricksterNumber === 4 || card?.tricksterNumber === 6) {
-              <p class="instruction mt-16">Chọn mục tiêu:</p>
-              <div class="target-list">
-                @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
-                  <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">{{ p.name }}</button>
-                }
-              </div>
-            }
-
-            @if (card?.tricksterNumber === 4) {
-              <p class="instruction mt-16">Bạn muốn xem gì của mục tiêu?</p>
-              <div style="display:flex; gap:8px; justify-content:center; margin-bottom:12px">
-                <button class="btn btn-outline btn-xs"
-                  [class.selected]="spiritMerchantMode === 'house'"
-                  [style.background]="spiritMerchantMode === 'house' ? 'var(--gold)' : ''"
-                  [style.color]="spiritMerchantMode === 'house' ? '#000' : ''"
-                  (click)="setSpiritMerchantMode('house')">🏠 Bài House</button>
-                <button class="btn btn-outline btn-xs"
-                  [class.selected]="spiritMerchantMode === 'token'"
-                  [style.background]="spiritMerchantMode === 'token' ? 'var(--gold)' : ''"
-                  [style.color]="spiritMerchantMode === 'token' ? '#000' : ''"
-                  (click)="setSpiritMerchantMode('token')">🪙 Số Token</button>
-              </div>
-            }
-
-            <div class="action-row mt-24">
-              <button class="btn btn-gold"
-                [disabled]="(card?.tricksterNumber === 1 && (!selectedTargetId || !selected2ndTargetId))
-                         || ((card?.tricksterNumber === 3 || card?.tricksterNumber === 6) && !selectedTargetId)
-                         || (card?.tricksterNumber === 4 && (!selectedTargetId || !spiritMerchantMode))"
-                (click)="confirmTricksterAction()">
-                ⚡ Thực hiện
-              </button>
-              <button class="btn btn-outline" (click)="gs.skipNightAction()">Bỏ qua</button>
-            </div>
-          } @else {
-            <p class="text-dim mt-24">Đang đợi họ hành động...</p>
-          }
-        </div>
-      </div>
-    }
-
-    @if (s.phase === 'night-blind-assassin') {
-      @let actor = currentNightActor();
-      @let card = currentNightCard();
-      <div class="phase-view">
-        <div class="phase-banner">
-          <div class="phase-title">🗡️ Pha Sát Thủ Mù (SỐ {{ card?.phaseOrder }})</div>
-        </div>
-        <div class="content-center">
-          <div class="actor-info">
-            <span class="text-gold">{{ actor?.name }}</span> — 
-            <span class="ninja-badge">
-              <span class="badge-num">{{ card?.phaseOrder }}</span>
-              Sát thủ trong đêm tối
-            </span>
-          </div>
-          @if (actor?.id === gs.localPlayerId()) {
-            <p class="instruction mt-16">Chọn 1 người để giết:</p>
-            <div class="target-list">
-              @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
-                <button class="target-btn danger" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">
-                  💀 {{ p.name }}
-                </button>
-              }
-            </div>
-            <div class="action-row mt-24">
-              <button class="btn btn-danger" [disabled]="!selectedTargetId" (click)="confirmAssassin()">🗡️ Giết!</button>
-              <button class="btn btn-outline" (click)="gs.skipNightAction()">Bỏ qua</button>
-            </div>
-          } @else {
-            <p class="text-dim mt-24">Đang đợi họ hành động...</p>
-          }
-        </div>
-      </div>
-    }
-
-    @if (s.phase === 'night-shinobi') {
-      @let actor = currentNightActor();
-      @let card = currentNightCard();
-      <div class="phase-view">
-        <div class="phase-banner">
-          <div class="phase-title">🥷 Pha Shinobi (SỐ {{ card?.phaseOrder }})</div>
-        </div>
-        <div class="content-center">
-          <div class="actor-info">
-            <span class="text-gold">{{ actor?.name }}</span> — 
-            <span class="ninja-badge">
-              <span class="badge-num">{{ card?.phaseOrder }}</span>
-              Bóng tối phán xét
-            </span>
-          </div>
-          @if (actor?.id === gs.localPlayerId()) {
-            @if (!s.pendingModal) {
-              <p class="instruction mt-16">Chọn mục tiêu để xem bài trước:</p>
-              <div class="target-list">
-                @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
-                  <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">{{ p.name }}</button>
-                }
-              </div>
-              <div class="action-row mt-24">
-                <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="shinobiPeek()">👁️ Nhìn trộm</button>
-                <button class="btn btn-outline" (click)="gs.skipNightAction()">Bỏ qua</button>
-              </div>
-            }
-          } @else {
-            <p class="text-dim mt-24">Đang đợi họ hành động...</p>
-          }
-        </div>
-      </div>
-    }
-
-    <!-- ══ END ROUND ══════════════════════════════════════════ -->
-    @if (s.phase === 'end-round') {
-      <div class="phase-view">
-        <div class="phase-banner">
-          <div class="phase-title">🌅 Kết Thúc Vòng {{ s.round }}</div>
-        </div>
-        <div class="content-center">
-          @if (s.roundWinnerFaction) {
-            <div class="winner-banner">
-              <div class="winner-icon">{{ s.roundWinnerFaction === 'crane' ? '🦢' : '🪷' }}</div>
-              <h2 class="text-gold">Phe {{ s.roundWinnerFaction.toUpperCase() }} thắng vòng này!</h2>
-              <p class="text-dim">{{ s.roundWinnerName }} có hạng cao nhất còn sống</p>
-            </div>
-          } @else {
-            <div class="winner-banner">
-              <div class="winner-icon">💀</div>
-              <h2 class="text-gold">Không có người sống sót!</h2>
-            </div>
-          }
-          <div class="reveal-grid mt-24">
-            @for (p of s.players; track p.id) {
-              <div class="reveal-card" [class.dead]="!p.isAlive" [class.winner]="p.houseCard?.faction === s.roundWinnerFaction">
-                <div class="reveal-name">{{ p.name }} {{ !p.isAlive ? '💀' : '' }}</div>
-                @if (p.houseCard) {
-                  <div class="house-mini {{ factionClass(p.houseCard.faction) }}">
-                    <span>{{ p.houseCard.faction === 'crane' ? '🦢' : p.houseCard.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
-                    <span>Hạng {{ p.houseCard.rank }}</span>
-                  </div>
-                }
-                <div class="reveal-honor">
-                  @if (didPlayerWinRound(p)) {
-                    <span class="text-gold">WIN</span>
-                  } @else {
-                    <span class="text-dim">LOSE</span>
-                  }
-                </div>
-              </div>
-            }
-          </div>
-          <button class="btn btn-gold btn-lg mt-32" id="btn-next-round" (click)="gs.nextRound()">
-            ⚔️ Vòng tiếp theo
+      @if (actor?.id === gs.localPlayerId()) {
+      <div class="side-panel-content">
+        <p class="panel-instruction">Chọn người để xem bài:</p>
+        <div class="target-list">
+          @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
+          <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">
+            {{ p.name }}
+            @if (p.isHouseRevealed && p.houseCard) { <span class="badge badge-{{ p.houseCard.faction }}">{{
+              factionLabel(p.houseCard.faction) }}</span> }
           </button>
+          }
+        </div>
+        <div class="action-grid mt-16">
+          <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="confirmSpyAction()"
+            aria-label="Thực hiện hành động">🔍 THỰC HIỆN</button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
         </div>
       </div>
-    }
+      } @else {
+      <div class="side-panel-content text-center">
+        <p class="text-dim">Đang đợi {{ actor?.name }} hành động...</p>
+      </div>
+      }
+      }
+
+      @if (s.phase === 'night-trickster') {
+      @let actor = currentNightActor();
+      @let card = currentNightCard();
+      @if (actor?.id === gs.localPlayerId()) {
+      <div class="side-panel-content">
+        <div class="card-desc-block">{{ card?.description }}</div>
+
+        @if (card?.tricksterNumber === 1) {
+        <p class="panel-instruction mt-12">Chọn Mục tiêu 1:</p>
+        <div class="target-list">
+          @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
+          <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">{{ p.name
+            }}</button>
+          }
+        </div>
+        <p class="panel-instruction mt-12">Chọn Mục tiêu 2:</p>
+        <div class="target-list">
+          @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
+          @if (p.id !== selectedTargetId) {
+          <button class="target-btn" [class.selected]="selected2ndTargetId === p.id" (click)="selectTarget2(p.id)">{{
+            p.name }}</button>
+          }
+          }
+        </div>
+        }
+
+        @if (card?.tricksterNumber === 3 || card?.tricksterNumber === 4 || card?.tricksterNumber === 6) {
+        <p class="panel-instruction mt-12">Chọn mục tiêu:</p>
+        <div class="target-list">
+          @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
+          <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">{{ p.name
+            }}</button>
+          }
+        </div>
+        }
+
+        @if (card?.tricksterNumber === 4) {
+        <p class="panel-instruction mt-12">Bạn muốn xem gì?</p>
+        <div style="display:flex; gap:8px; justify-content:center; margin-bottom:12px">
+          <button class="btn btn-outline btn-xs" [class.selected]="spiritMerchantMode === 'house'"
+            [style.background]="spiritMerchantMode === 'house' ? 'rgba(var(--accent-gold-rgb),0.15)' : ''"
+            (click)="setSpiritMerchantMode('house')">🏠 House</button>
+          <button class="btn btn-outline btn-xs" [class.selected]="spiritMerchantMode === 'token'"
+            [style.background]="spiritMerchantMode === 'token' ? 'rgba(var(--accent-gold-rgb),0.15)' : ''"
+            (click)="setSpiritMerchantMode('token')">🪙 Token</button>
+        </div>
+        }
+
+        <div class="action-grid mt-16">
+          <button class="btn btn-gold" [disabled]="(card?.tricksterNumber === 1 && (!selectedTargetId || !selected2ndTargetId))
+                           || ((card?.tricksterNumber === 3 || card?.tricksterNumber === 6) && !selectedTargetId)
+                           || (card?.tricksterNumber === 4 && (!selectedTargetId || !spiritMerchantMode))"
+            (click)="confirmTricksterAction()" aria-label="Thực hiện Trickster">
+            ⚡ THỰC HIỆN
+          </button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
+        </div>
+      </div>
+      } @else {
+      <div class="side-panel-content text-center">
+        <p class="text-dim">Đang đợi {{ actor?.name }} hành động...</p>
+      </div>
+      }
+      }
+
+      @if (s.phase === 'night-blind-assassin') {
+      @let actor = currentNightActor();
+      @if (actor?.id === gs.localPlayerId()) {
+      <div class="side-panel-content">
+        <p class="panel-instruction">Chọn 1 người để giết:</p>
+        <div class="target-list">
+          @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
+          <button class="target-btn danger" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">
+            💀 {{ p.name }}
+          </button>
+          }
+        </div>
+        <div class="action-grid mt-16">
+          <button class="btn btn-danger" [disabled]="!selectedTargetId" (click)="confirmAssassin()"
+            aria-label="Giết mục tiêu">🗡️ GIẾT!</button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
+        </div>
+      </div>
+      } @else {
+      <div class="side-panel-content text-center">
+        <p class="text-dim">Đang đợi {{ actor?.name }} hành động...</p>
+      </div>
+      }
+      }
+
+      @if (s.phase === 'night-shinobi') {
+      @let actor = currentNightActor();
+      @if (actor?.id === gs.localPlayerId()) {
+      @if (!s.pendingModal) {
+      <div class="side-panel-content">
+        <p class="panel-instruction">Chọn mục tiêu để xem bài:</p>
+        <div class="target-list">
+          @for (p of otherAlivePlayers(actor?.id ?? ''); track p.id) {
+          <button class="target-btn" [class.selected]="selectedTargetId === p.id" (click)="selectTarget(p.id)">{{ p.name
+            }}</button>
+          }
+        </div>
+        <div class="action-grid mt-16">
+          <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="shinobiPeek()"
+            aria-label="Nhìn trộm bài">👁️ NHÌN TRỘM</button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
+        </div>
+      </div>
+      }
+      } @else {
+      <div class="side-panel-content text-center">
+        <p class="text-dim">Đang đợi {{ actor?.name }} hành động...</p>
+      </div>
+      }
+      }
+
+      <!-- END ROUND: Reveal grid -->
+      @if (s.phase === 'end-round') {
+      <div class="side-panel-content">
+        <div class="reveal-grid">
+          @for (p of s.players; track p.id) {
+          <div class="reveal-card" [class.dead]="!p.isAlive"
+            [class.winner]="p.houseCard?.faction === s.roundWinnerFaction">
+            <div class="reveal-name">{{ p.name }} {{ !p.isAlive ? '💀' : '' }}</div>
+            @if (p.houseCard) {
+            <div class="house-mini {{ factionClass(p.houseCard.faction) }}">
+              <span>{{ p.houseCard.faction === 'crane' ? '🦢' : p.houseCard.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
+              <span>Hạng {{ p.houseCard.rank }}</span>
+            </div>
+            }
+            <div class="reveal-honor">
+              @if (didPlayerWinRound(p)) {
+              <span class="text-gold">WIN</span>
+              } @else {
+              <span class="text-dim">LOSE</span>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        <button class="btn btn-gold btn-lg mt-24" id="btn-next-round" (click)="gs.nextRound()">
+          ⚔️ Vòng tiếp theo
+        </button>
+      </div>
+      }
+
+    </div>
+  </main>
+
+  <!-- ══ ROW 3: LOWER DASHBOARD ═══════════════════════════════ -->
+  <footer class="lower-dashboard">
+    <!-- Activity Log -->
+    <div class="dash-panel log-panel">
+      <p class="dash-label">📜 Nhật Ký</p>
+      <div class="dash-scroll">
+        @for (entry of s.actionLog; track $index) {
+        @let parts = entry.message.split(' | ');
+        <div class="log-entry">
+          <span class="log-action">{{ parts[0] }}</span>
+          @if (parts.length > 1) {
+          <span class="log-desc">{{ parts[1] }}</span>
+          }
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Night Phase Queue -->
+    <div class="dash-panel queue-panel">
+      @if (s.phase.startsWith('night-')) {
+      <p class="dash-label">⚔️ Hàng Đợi — {{ s.phase.replace('night-', '').toUpperCase() }}</p>
+      <div class="queue-list">
+        @for (qi of currentPhaseQueueItems(); track $index) {
+        @let p = s.players | playerById: qi.playerId;
+        @if (p) {
+        <div class="queue-chip" [class.is-acting]="qi === currentNightQueueItem()">
+          <span class="q-avatar">{{ p.name[0] }}</span>
+          <span class="q-name">{{ p.name }}</span>
+          <span class="q-order text-gold">{{ qi.card.phaseOrder }}</span>
+        </div>
+        }
+        }
+      </div>
+      } @else {
+      <p class="dash-label">🎴 Thông tin</p>
+      @let me = localPlayer();
+      @if (me && !s.phase.startsWith('end') && !s.phase.startsWith('game') && !s.phase.startsWith('lobby')) {
+      <div class="my-identity">
+        @if (me.needsHouseReview) {
+        <div class="house-mini" style="border-style: dashed;">
+          <span>❓</span>
+          <span class="text-dim">Bí ẩn</span>
+        </div>
+        } @else {
+        <div class="house-mini {{ factionClass(me.houseCard?.faction) }}">
+          <span>{{ me.houseCard?.faction === 'crane' ? '🦢' : me.houseCard?.faction === 'lotus' ? '🪷' : '⚔️' }}</span>
+          <span>Hạng {{ me.houseCard?.rank }}</span>
+        </div>
+        }
+        <div class="mini-ninja-row mt-8">
+          @for (nc of getUnusedNinjaCards(me); track nc.id) {
+          <div class="mini-ninja-tag">
+            <span>{{ nc.emoji }}</span>
+            <span>{{ nc.name }} ({{ nc.phaseOrder }})</span>
+          </div>
+          }
+        </div>
+      </div>
+      }
+      }
+    </div>
+
+    <!-- Token History -->
+    <div class="dash-panel identity-panel">
+      <p class="dash-label">💰 Lịch Sử Xu</p>
+      @let me = localPlayer();
+      @if (me?.tokenHistory?.length) {
+      <div class="dash-scroll">
+        @for (h of me!.tokenHistory; track $index) {
+        <div class="token-history-row">
+          <span>Trận {{ h.round }}{{ h.reason ? ' (' + h.reason + ')' : '' }}</span>
+          <span [class.text-gold]="h.amount > 0" [class.text-danger]="h.amount < 0" style="font-weight:700">{{ h.amount
+            > 0 ? '+' : '' }}{{ h.amount }}</span>
+        </div>
+        }
+      </div>
+      } @else {
+      <p class="text-dim" style="font-size:0.75rem">Chưa có lịch sử.</p>
+      }
+    </div>
+  </footer>
 
   }
 </div>

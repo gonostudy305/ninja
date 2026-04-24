@@ -1,4 +1,4 @@
-import { Component, computed, signal, effect } from '@angular/core';
+import { Component, computed, signal, effect, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GameStateService } from '../../services/game-state.service';
@@ -14,7 +14,7 @@ import { PlayerByIdPipe } from '../../pipes/player-by-id.pipe';
 })
 export class GameBoardComponent {
   get s() { return this.gs.state(); }
-  
+
   constructor(public gs: GameStateService, private router: Router) {
     effect(() => {
       if (this.gs.state().phase === 'game-over') {
@@ -33,7 +33,7 @@ export class GameBoardComponent {
       return qi.card.phase === prefix && p && p.isAlive;
     });
   });
-  
+
   currentNightQueueItem = computed(() => {
     const s = this.gs.state();
     return s.nightQueue[s.currentNightActionIndex] ?? null;
@@ -98,7 +98,7 @@ export class GameBoardComponent {
   confirmTricksterAction() {
     const actor = this.currentNightActor()!;
     const card = this.currentNightCard()!;
-    
+
     switch (card.tricksterNumber) {
       case 1:
         this.gs.actionShapeshifter(actor.id, this.selectedTargetId!, this.selected2ndTargetId!);
@@ -222,6 +222,11 @@ export class GameBoardComponent {
     const phasePrefix = this.s.phase.replace('night-', '');
     const card = p.ninjaCards.find(c => c.phase === phasePrefix);
     return card ? card.phaseOrder : null;
+  }
+
+  isCurrentActor(playerId: string): boolean {
+    const actor = this.currentNightActor();
+    return !!actor && actor.id === playerId;
   }
 
   otherAlivePlayers(excludeId: string) {

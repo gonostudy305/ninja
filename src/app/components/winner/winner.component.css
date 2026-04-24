@@ -1,60 +1,224 @@
+/* ═══════════════════════════════════════════════════
+   WINNER — Poker Boardgame Theme
+   ═══════════════════════════════════════════════════ */
+
 .winner-page {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  padding: 20px; background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--bg);
+  position: relative;
 }
 
-.confetti-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-.confetti-piece {
-  position: absolute; width: 8px; height: 18px; border-radius: 2px; top: -30px;
-  animation: fall 4s ease-in infinite; opacity: 0.6;
+/* Confetti */
+.confetti-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
 }
-.confetti-piece:nth-child(odd)  { background: var(--gold); }
-.confetti-piece:nth-child(even) { background: var(--red); }
-.confetti-piece:nth-child(3n)   { background: var(--blue); }
+
+.confetti-piece {
+  position: absolute;
+  width: 8px;
+  height: 18px;
+  border-radius: 2px;
+  top: -30px;
+  animation: fall 4s ease-in infinite;
+  opacity: 0.7;
+}
+
+.confetti-piece:nth-child(odd) {
+  background: rgb(var(--accent-gold-rgb));
+}
+
+.confetti-piece:nth-child(even) {
+  background: rgb(var(--action-red-rgb));
+}
+
+.confetti-piece:nth-child(3n) {
+  background: var(--crane);
+}
+
 @keyframes fall {
-  0%   { transform: translateY(-30px) rotate(0deg);   opacity: 1; }
-  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  0% {
+    transform: translateY(-30px) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(110vh) rotate(720deg);
+    opacity: 0;
+  }
 }
 
 .winner-container {
-  position: relative; z-index: 1;
-  background: #111; border: 1px solid var(--border-bright);
-  border-radius: var(--radius-lg); padding: 44px 52px; max-width: 540px; width: 100%;
-  box-shadow: var(--shadow); animation: slideUp 0.4s ease;
+  position: relative;
+  z-index: 1;
+  background: rgba(var(--panel-slate-rgb), 0.9);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 44px 48px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  animation: slideUp 0.4s ease;
 }
 
-.trophy-area { text-align: center; }
-.trophy { font-size: 5rem; display: block; margin-bottom: 12px; animation: float 3s ease-in-out infinite; }
-.title  { font-size: 2.1rem; color: var(--text); }
+.trophy-area {
+  text-align: center;
+}
+
+.trophy {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+
+.title {
+  font-size: 2rem;
+  color: var(--text);
+  font-family: var(--font-heading);
+}
+
 .winner-name {
-  font-size: 1.6rem; font-weight: 700; color: var(--gold);
-  margin-top: 8px; margin-bottom: 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgb(var(--accent-gold-rgb));
+  margin-top: 8px;
+  margin-bottom: 12px;
+  font-family: var(--font-heading);
 }
+
 .faction-display {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-size: 0.95rem; color: var(--text-sub);
-  background: #1a1a1a; border: 1px solid var(--border);
-  border-radius: 999px; padding: 7px 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  background: rgba(var(--card-slate-rgb), 0.6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 6px 18px;
 }
-.faction-icon { font-size: 1.2rem; }
 
-.leaderboard-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: #ffffff !important; margin-bottom: 12px; font-weight: 800; }
-.leaderboard { display: flex; flex-direction: column; gap: 10px; }
+.faction-icon {
+  font-size: 1.1rem;
+}
+
+.leaderboard-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+}
+
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .leaderboard-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px 18px; border-radius: 8px;
-  background: #1a1a1a; border: 1px solid #333; transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  background: rgba(var(--card-slate-rgb), 0.5);
+  border: 1px solid var(--border);
+  transition: all var(--transition-fast);
 }
-.leaderboard-row.top-player { border-color: #ffcc00; background: #221a05; }
-.rank-num {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: #111; border: 1px solid #444;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.85rem; font-weight: 900; color: #ffffff !important; flex-shrink: 0;
-}
-.lb-name    { flex: 1; font-weight: 700; color: #ffffff !important; }
-.lb-faction { font-size: 0.85rem; color: #ffffff !important; }
-.lb-honor   { color: #ffcc00 !important; font-weight: 900; font-size: 1.1rem; }
 
-@keyframes slideUp { from{transform:translateY(24px);opacity:0;} to{transform:translateY(0);opacity:1;} }
-@keyframes float   { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+.leaderboard-row:hover {
+  background: rgba(var(--card-slate-rgb), 0.7);
+}
+
+.leaderboard-row.top-player {
+  border-color: rgba(var(--accent-gold-rgb), 0.5);
+  background: rgba(var(--accent-gold-rgb), 0.06);
+  box-shadow: 0 0 12px rgba(var(--accent-gold-rgb), 0.1);
+}
+
+.rank-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(var(--bg-slate-rgb), 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+}
+
+.leaderboard-row.top-player .rank-num {
+  background: rgba(var(--accent-gold-rgb), 0.15);
+  border-color: rgba(var(--accent-gold-rgb), 0.4);
+  color: rgb(var(--accent-gold-rgb));
+}
+
+.lb-name {
+  flex: 1;
+  font-weight: 700;
+  color: #fff;
+}
+
+.lb-faction {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.lb-honor {
+  color: rgb(var(--accent-gold-rgb));
+  font-weight: 700;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .confetti-piece,
+  .trophy {
+    animation: none !important;
+  }
+
+  .winner-container {
+    animation: none !important;
+  }
+}

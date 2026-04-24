@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GameStateService } from '../../services/game-state.service';
+import { MASCOTS } from '../../models/types';
 
 @Component({
   selector: 'app-lobby',
@@ -13,6 +14,8 @@ import { GameStateService } from '../../services/game-state.service';
 export class LobbyComponent {
   playerName = signal('');
   roomCodeInput = signal('');
+  mascotList = MASCOTS;
+  selectedMascot = signal(this.mascotList[0]);
 
   get s() { return this.gs.state; }
   get rId() { return this.gs.roomId; }
@@ -34,7 +37,7 @@ export class LobbyComponent {
   async createRoom() {
     if (!this.playerName().trim()) { alert('Vui lòng nhập tên!'); return; }
     try {
-      await this.gs.createRoom(this.playerName().trim());
+      await this.gs.createRoom(this.playerName().trim(), this.selectedMascot());
     } catch (e: any) {
       alert(e.message);
     }
@@ -44,7 +47,7 @@ export class LobbyComponent {
     if (!this.playerName().trim()) { alert('Vui lòng nhập tên!'); return; }
     if (!this.roomCodeInput().trim()) { alert('Vui lòng nhập mã phòng!'); return; }
     try {
-      await this.gs.joinExistingRoom(this.roomCodeInput().trim(), this.playerName().trim());
+      await this.gs.joinExistingRoom(this.roomCodeInput().trim(), this.playerName().trim(), this.selectedMascot());
     } catch (e: any) {
       alert(e.message);
     }

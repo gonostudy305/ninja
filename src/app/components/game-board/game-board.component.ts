@@ -265,4 +265,85 @@ export class GameBoardComponent {
     };
     return labels[phase] || phase;
   }
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    const isEditing = document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA';
+    if (isEditing) return;
+
+    // Modals
+    if (this.s.pendingModal) {
+      if (['spy-result', 'mystic-peek'].includes(this.s.pendingModal.type)) {
+        if (event.key === 'Enter' || event.key === 'Escape' || event.key === ' ') {
+          if (this.s.pendingModal.type === 'mystic-peek' && this.s.pendingModal.data?.revealedIndex === null) return;
+          this.gs.closePeekModal();
+        }
+        return;
+      }
+      if (this.s.pendingModal.type === 'shapeshifter' && this.s.pendingModal.actorId === this.gs.localPlayerId()) {
+        if (event.key === 'Enter') this.resolveShapeshifterModal(true);
+        if (event.key === 'Escape' || event.key === ' ') this.resolveShapeshifterModal(false);
+      }
+      return;
+    }
+
+    // Cover Screen
+    if (this.s.showCover && (event.key === 'Enter' || event.key === ' ')) {
+      this.gs.dismissCover();
+      return;
+    }
+
+    // Public Announcement
+    if (this.s.publicAnnouncement && (event.key === 'Enter' || event.key === ' ')) {
+      this.gs.dismissAnnouncement();
+      return;
+    }
+
+    // Draft Phase
+    if (this.s.phase.startsWith('draft-')) {
+      const myHand = this.localPlayer()?.draftHand ?? [];
+      if (event.key === '1' && myHand.length > 0) this.selectCard(0);
+      if (event.key === '2' && myHand.length > 1) this.selectCard(1);
+      if (event.key === 'Enter') this.confirmDraftPick();
+      return;
+    }
+
+    // House Viewing
+    if (this.s.phase === 'house-viewing' && !this.s.houseViewedIds.includes(this.gs.localPlayerId() ?? '')) {
+      if (event.key === 'Enter' || event.key === ' ') this.doneViewing();
+      return;
+    }
+
+    // End Round
+    if (this.s.phase === 'end-round' && (event.key === 'Enter' || event.key === ' ')) {
+      this.gs.nextRound();
+      return;
+    }
+
+    // Night Phase Actions
+    if (this.s.phase.startsWith('night-') && this.currentNightActor()?.id === this.gs.localPlayerId()) {
+      if (event.key === 'Enter') {
+        if (this.s.phase === 'night-spy' || this.s.phase === 'night-mystic') this.confirmSpyAction();
+        if (this.s.phase === 'night-trickster') this.confirmTricksterAction();
+        if (this.s.phase === 'night-blind-assassin') this.confirmAssassin();
+        if (this.s.phase === 'night-shinobi') this.shinobiPeek();
+      }
+      if (event.key === 'Escape' || event.key === ' ') {
+        this.gs.skipNightAction();
+      }
+
+      const num = parseInt(event.key);
+      if (!isNaN(num) && num >= 1 && num <= 9) {
+        const targets = this.otherAlivePlayers(this.gs.localPlayerId()!);
+        if (targets[num - 1]) {
+          const card = this.currentNightCard();
+          if (this.s.phase === 'night-trickster' && card?.tricksterNumber === 1 && this.selectedTargetId) {
+            this.selectTarget2(targets[num - 1].id);
+          } else {
+            this.selectTarget(targets[num - 1].id);
+          }
+        }
+      }
+    }
+  }
 }

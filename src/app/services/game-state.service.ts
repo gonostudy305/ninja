@@ -167,12 +167,12 @@ export class GameStateService {
   }
 
   // ─── LOBBY ───────────────────────────────────────────────────────
-  async createRoom(playerName: string) {
+  async createRoom(playerName: string, mascot: string = 'wolf') {
     const rId = Math.random().toString(36).substring(2, 6).toUpperCase();
     const pId = Math.random().toString(36).substring(2, 9);
 
     const hostPlayer: Player = {
-      id: pId, name: playerName, houseCard: null, ninjaCards: [],
+      id: pId, name: playerName, mascot, houseCard: null, ninjaCards: [],
       draftHand: [], draftPassCards: [], tokens: [], tokenHistory: [], isAlive: true, isHouseRevealed: false
     };
 
@@ -183,7 +183,7 @@ export class GameStateService {
     return rId;
   }
 
-  async joinExistingRoom(rId: string, playerName: string) {
+  async joinExistingRoom(rId: string, playerName: string, mascot: string = 'wolf') {
     const pId = Math.random().toString(36).substring(2, 9);
 
     const snap = await get(ref(this.db, `rooms/${rId.toUpperCase()}/gameState`));
@@ -192,9 +192,10 @@ export class GameStateService {
     const s = snap.val() as GameState;
     if (s.phase !== 'lobby') throw new Error('Trận đấu đã bắt đầu');
     if (s.players.length >= 11) throw new Error('Phòng đã đầy');
+    if (s.players.some(p => p.mascot === mascot)) throw new Error('Mascot này đã được chọn');
 
     const newPlayer: Player = {
-      id: pId, name: playerName, houseCard: null, ninjaCards: [],
+      id: pId, name: playerName, mascot, houseCard: null, ninjaCards: [],
       draftHand: [], draftPassCards: [], tokens: [], tokenHistory: [], isAlive: true, isHouseRevealed: false
     };
 

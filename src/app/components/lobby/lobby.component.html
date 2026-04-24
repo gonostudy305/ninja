@@ -16,72 +16,73 @@
     <div class="divider"></div>
 
     @if (!rId()) {
-      <div class="section">
-        <h3 class="section-label">Tên của bạn</h3>
-        <div class="name-input-wrap">
-          <input
-            class="name-input"
-            type="text"
-            placeholder="Nhập tên..."
-            [ngModel]="playerName()"
-            (ngModelChange)="playerName.set($event)"
-            maxlength="16"
-          />
+    <div class="section">
+      <h3 class="section-label">Tên của bạn</h3>
+      <div class="name-input-wrap">
+        <input class="name-input" type="text" placeholder="Nhập tên..." [ngModel]="playerName()"
+          (ngModelChange)="playerName.set($event)" maxlength="16" />
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-label">Chọn Mascot Đại Diện</h3>
+      <div class="mascot-grid">
+        @for (m of mascotList; track m) {
+        <div class="mascot-item" [class.selected]="selectedMascot() === m" (click)="selectedMascot.set(m)">
+          <img [src]="'https://api.dicebear.com/7.x/adventurer/svg?seed=' + m + '&backgroundColor=transparent'"
+            [alt]="m" />
+          <div class="mascot-name">{{ m }}</div>
         </div>
-      </div>
-
-      <div class="section flex flex-col gap-16">
-        <button class="btn btn-gold btn-block" (click)="createRoom()">
-          🏰 &nbsp; Tạo phòng mới
-        </button>
-
-        <div class="join-room-box">
-          <h3 class="section-label">Vào phòng (nếu có mã)</h3>
-          <div class="flex gap-8">
-            <input
-              class="name-input flex-1"
-              type="text"
-              placeholder="VD: ABCD"
-              [ngModel]="roomCodeInput()"
-              (ngModelChange)="roomCodeInput.set($event)"
-              maxlength="6"
-            />
-            <button class="btn btn-outline" (click)="joinRoom()">🎲 Vào</button>
-          </div>
-        </div>
-      </div>
-    } @else {
-      <div class="section text-center">
-        <h2 class="text-gold" style="font-size: 2.5rem; letter-spacing: 4px;">{{ rId() }}</h2>
-        <p class="text-dim">Mã phòng của bạn</p>
-      </div>
-
-      <div class="section">
-        <h3 class="section-label">Đang chờ ({{ s().players.length }}/11) ...</h3>
-        <div class="waiting-list">
-          @for (p of s().players; track p.id) {
-            <div class="player-row">
-              <span class="text-white">{{ p.name }} {{ p.id === lId() ? '(Bạn)' : '' }}</span>
-              @if ($index === 0) {
-                <span class="badge badge-gold">Chủ phòng</span>
-              }
-            </div>
-          }
-          @if (s().players.length === 0) {
-            <p class="text-dim text-center">Chưa có ai...</p>
-          }
-        </div>
-      </div>
-
-      <div class="section">
-        @if (isHost) {
-          <button class="btn btn-gold btn-block" [disabled]="s().players.length < 4" (click)="startGame()">
-            ⚔️ &nbsp; Bắt đầu (Cần ít nhất 4)
-          </button>
-        } @else {
-          <p class="text-center text-dim">Đang chờ chủ phòng bắt đầu...</p>
         }
       </div>
+    </div>
+
+    <div class="section flex flex-col gap-16">
+      <button class="btn btn-gold btn-block" (click)="createRoom()">
+        🏰 &nbsp; Tạo phòng mới
+      </button>
+
+      <div class="join-room-box">
+        <h3 class="section-label">Vào phòng (nếu có mã)</h3>
+        <div class="flex gap-8">
+          <input class="name-input flex-1" type="text" placeholder="VD: ABCD" [ngModel]="roomCodeInput()"
+            (ngModelChange)="roomCodeInput.set($event)" maxlength="6" />
+          <button class="btn btn-outline" (click)="joinRoom()">🎲 Vào</button>
+        </div>
+      </div>
+    </div>
+    } @else {
+    <div class="section text-center">
+      <h2 class="text-gold" style="font-size: 2.5rem; letter-spacing: 4px;">{{ rId() }}</h2>
+      <p class="text-dim">Mã phòng của bạn</p>
+    </div>
+
+    <div class="section">
+      <h3 class="section-label">Đang chờ ({{ s().players.length }}/11) ...</h3>
+      <div class="waiting-list">
+        @for (p of s().players; track p.id) {
+        <div class="player-row">
+          <span class="text-white">{{ p.name }} {{ p.id === lId() ? '(Bạn)' : '' }}</span>
+          @if ($index === 0) {
+          <span class="badge badge-gold">Chủ phòng</span>
+          }
+        </div>
+        }
+        @if (s().players.length === 0) {
+        <p class="text-dim text-center">Chưa có ai...</p>
+        }
+      </div>
+    </div>
+
+    <div class="section">
+      @if (isHost) {
+      <button class="btn btn-gold btn-block" [disabled]="s().players.length < 4" (click)="startGame()">
+        ⚔️ &nbsp; Bắt đầu (Cần ít nhất 4)
+      </button>
+      } @else {
+      <p class="text-center text-dim">Đang chờ chủ phòng bắt đầu...</p>
+      }
+    </div>
     }
   </div>
 </section>

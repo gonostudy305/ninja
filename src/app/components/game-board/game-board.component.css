@@ -307,17 +307,23 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(var(--card-slate-rgb), 0.9);
+  background: radial-gradient(circle, rgba(var(--card-slate-rgb), 0.9), #000);
   border: 3px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
   box-shadow: var(--shadow-chip);
-  transition: all var(--transition-fast);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  position: relative;
+}
+
+.avatar-circle .mascot-img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: transform var(--transition-fast);
 }
 
 .avatar-circle.local {
@@ -326,8 +332,16 @@
 }
 
 .avatar-circle.dead {
-  opacity: 0.3;
-  filter: grayscale(1);
+  opacity: 0.4;
+  filter: grayscale(1) sepia(0.2);
+  transform: scale(0.9);
+}
+
+.avatar-circle.winner {
+  transform: scale(1.2);
+  border-color: rgb(var(--accent-gold-rgb));
+  box-shadow: 0 0 20px rgba(var(--accent-gold-rgb), 0.8);
+  z-index: 20;
 }
 
 .dead-marker {
@@ -372,9 +386,22 @@
 
 /* Acting glow */
 .player-seat.is-acting .avatar-circle {
-  border-color: rgb(var(--accent-gold-rgb));
-  box-shadow: 0 0 14px rgba(var(--accent-gold-rgb), 0.6);
-  animation: pulse-glow 1.5s ease-in-out infinite;
+  border-color: rgb(var(--action-red-rgb));
+  box-shadow: 0 0 20px rgba(var(--action-red-rgb), 0.6);
+  transform: scale(1.15) translateY(-4px);
+  animation: pulse-red-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-red-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(var(--action-red-rgb), 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 25px rgba(var(--action-red-rgb), 0.9);
+  }
 }
 
 .acting-glow {

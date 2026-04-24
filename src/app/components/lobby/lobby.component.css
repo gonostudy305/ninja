@@ -127,3 +127,66 @@
 .player-row:last-child {
   border-bottom: none;
 }
+
+/* ── MASCOT SELECTION GRID ── */
+.mascot-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.mascot-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.mascot-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  transition: transform var(--transition-fast);
+}
+
+.mascot-item .mascot-name {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.mascot-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(var(--accent-gold-rgb), 0.4);
+  transform: translateY(-2px);
+}
+
+.mascot-item:hover img {
+  transform: scale(1.1);
+}
+
+.mascot-item.selected {
+  background: rgba(var(--accent-gold-rgb), 0.15);
+  border-color: rgb(var(--accent-gold-rgb));
+  box-shadow: 0 0 16px rgba(var(--accent-gold-rgb), 0.3);
+}
+
+.mascot-item.selected .mascot-name {
+  color: rgb(var(--accent-gold-rgb));
+}
+
+@media (max-width: 480px) {
+  .mascot-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

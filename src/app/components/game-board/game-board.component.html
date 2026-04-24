@@ -448,8 +448,11 @@
         [class.is-acting]="isCurrentActor(p.id)">
 
         <div class="avatar-wrapper">
-          <div class="avatar-circle" [class.local]="p.id === gs.localPlayerId()" [class.dead]="!p.isAlive">
-            <span class="avatar-initial">{{ p.name[0] }}</span>
+          <div class="avatar-circle" [class.local]="p.id === gs.localPlayerId()" [class.dead]="!p.isAlive"
+            [class.winner]="p.id === s.gameWinnerId">
+            <img
+              [src]="'https://api.dicebear.com/7.x/adventurer/svg?seed=' + (p.mascot || 'wolf') + '&backgroundColor=transparent'"
+              [alt]="p.mascot" class="mascot-img" />
           </div>
           @if (!p.isAlive) {
           <span class="dead-marker">💀</span>
@@ -529,8 +532,9 @@
         </div>
         <div class="action-grid mt-16">
           <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="confirmSpyAction()"
-            aria-label="Thực hiện hành động">🔍 THỰC HIỆN</button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
+            aria-label="Thực hiện hành động">🔍 THỰC HIỆN <span class="kbd-hint">ENTER</span></button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
+              class="kbd-hint">ESC</span></button>
         </div>
       </div>
       } @else {
@@ -593,9 +597,10 @@
                            || ((card?.tricksterNumber === 3 || card?.tricksterNumber === 6) && !selectedTargetId)
                            || (card?.tricksterNumber === 4 && (!selectedTargetId || !spiritMerchantMode))"
             (click)="confirmTricksterAction()" aria-label="Thực hiện Trickster">
-            ⚡ THỰC HIỆN
+            ⚡ THỰC HIỆN <span class="kbd-hint">ENTER</span>
           </button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
+              class="kbd-hint">ESC</span></button>
         </div>
       </div>
       } @else {
@@ -619,8 +624,9 @@
         </div>
         <div class="action-grid mt-16">
           <button class="btn btn-danger" [disabled]="!selectedTargetId" (click)="confirmAssassin()"
-            aria-label="Giết mục tiêu">🗡️ GIẾT!</button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
+            aria-label="Giết mục tiêu">🗡️ GIẾT! <span class="kbd-hint">ENTER</span></button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
+              class="kbd-hint">ESC</span></button>
         </div>
       </div>
       } @else {
@@ -644,8 +650,9 @@
         </div>
         <div class="action-grid mt-16">
           <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="shinobiPeek()"
-            aria-label="Nhìn trộm bài">👁️ NHÌN TRỘM</button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA</button>
+            aria-label="Nhìn trộm bài">👁️ NHÌN TRỘM <span class="kbd-hint">ENTER</span></button>
+          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
+              class="kbd-hint">ESC</span></button>
         </div>
       </div>
       }

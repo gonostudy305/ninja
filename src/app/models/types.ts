@@ -32,9 +32,15 @@ export interface NinjaCard {
   emoji: string;
 }
 
+export const MASCOTS = [
+  'wolf', 'tiger', 'crane', 'dragon', 'kitsune', 'neko',
+  'samurai', 'shinobi', 'ronin', 'onnamusha', 'oni', 'hannya'
+];
+
 export interface Player {
   id: string;
   name: string;
+  mascot: string;
   houseCard: HouseCard | null;
   ninjaCards: NinjaCard[];
   draftHand: NinjaCard[];

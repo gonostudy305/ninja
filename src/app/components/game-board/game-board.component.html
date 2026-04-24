@@ -77,7 +77,8 @@
             @if (s.pendingModal.data.revealedIndex !== null) {
               @let revealedCard = s.pendingModal.data.ninjas[s.pendingModal.data.revealedIndex];
               <div class="card-desc-block mt-16">
-                <strong class="text-gold">{{ revealedCard.name }}:</strong> {{ revealedCard.description }}
+                <strong class="text-gold">{{ revealedCard.name }}:</strong> 
+                <span style="color: #ffffff !important;">{{ revealedCard.description }}</span>
               </div>
             }
           </div>
@@ -89,15 +90,21 @@
           <h2 class="modal-title">🎭 Shapeshifter</h2>
           <p class="modal-sub">Bạn xem thấy hai bài House này:</p>
           <div class="modal-two-cards">
-            <div class="mini-card {{ factionClass(s.pendingModal.data?.t1?.houseCard?.faction) }}">
-              <p class="text-dim" style="font-size:0.75rem">{{ s.pendingModal.data?.t1?.name }}</p>
-              <span>{{ s.pendingModal.data?.t1?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
-              <p class="text-gold">Hạng {{ s.pendingModal.data?.t2?.houseCard?.rank }}</p>
+            <div class="mini-card">
+              <p class="text-white mb-8">{{ s.pendingModal.data?.t1?.name }}</p>
+              <div class="house-card-visual {{ factionClass(s.pendingModal.data?.t1?.houseCard?.faction) }}">
+                <span class="faction-symbol" style="font-size: 3rem;">{{ s.pendingModal.data?.t1?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
+                <span class="rank-text" style="font-size: 2rem; font-weight: 900;">{{ s.pendingModal.data?.t1?.houseCard?.rank }}</span>
+                <span class="faction-name">{{ factionLabel(s.pendingModal.data?.t1?.houseCard?.faction) }}</span>
+              </div>
             </div>
-            <div class="mini-card {{ factionClass(s.pendingModal.data?.t2?.houseCard?.faction) }}">
-              <p class="text-dim" style="font-size:0.75rem">{{ s.pendingModal.data?.t2?.name }}</p>
-              <span>{{ s.pendingModal.data?.t2?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
-              <p class="text-gold">Hạng {{ s.pendingModal.data?.t2?.houseCard?.rank }}</p>
+            <div class="mini-card">
+              <p class="text-white mb-8">{{ s.pendingModal.data?.t2?.name }}</p>
+              <div class="house-card-visual {{ factionClass(s.pendingModal.data?.t2?.houseCard?.faction) }}">
+                <span class="faction-symbol" style="font-size: 3rem;">{{ s.pendingModal.data?.t2?.houseCard?.faction === 'crane' ? '🦢' : '🪷' }}</span>
+                <span class="rank-text" style="font-size: 2rem; font-weight: 900;">{{ s.pendingModal.data?.t2?.houseCard?.rank }}</span>
+                <span class="faction-name">{{ factionLabel(s.pendingModal.data?.t2?.houseCard?.faction) }}</span>
+              </div>
             </div>
           </div>
           <p class="modal-sub mt-16">Bạn có muốn hoán đổi chúng không?</p>
@@ -126,13 +133,13 @@
                   <span style="font-size:0.65rem; color:#c9a84c; margin-top:4px; text-align:center">{{ card.name }}</span>
                 } @else {
                   <span style="font-size:2rem">🎴</span>
-                  <span style="font-size:0.65rem; color:#aaa; margin-top:4px">Úp</span>
+                  <span style="font-size:0.65rem; color:#ffffff; margin-top:4px">Úp</span>
                 }
               </div>
             }
           </div>
           @if (revealed.length < 2) {
-            <p style="color:#aaa; font-size:0.8rem; margin-top:12px; text-align:center">Nhấn để lật bài (còn {{ 2 - revealed.length }} lượt)</p>
+            <p style="color:#ffffff; font-size:0.8rem; margin-top:12px; text-align:center">Nhấn để lật bài (còn {{ 2 - revealed.length }} lượt)</p>
           }
         }
 
@@ -195,18 +202,14 @@
           <!-- Peek: Token -->
           @if (s.pendingModal.data?.peekMode === 'token') {
             <p class="modal-sub">Mục tiêu có <strong class="text-gold">{{ s.pendingModal.data?.targetTokenCount }}</strong> Token.</p>
-            <p style="font-size:0.75rem; color:#aaa; margin-bottom:8px">Chọn 1 Token đang úp của họ để xem:</p>
+            <p style="font-size:0.75rem; color:#ffffff; margin-bottom:8px">Chọn 1 Token đang úp của họ để xem:</p>
             
-            <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px">
+            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px">
               @for (t of victim?.tokens; track $index; let ti = $index) {
-                <div (click)="spiritMerchantTargetTokenIdx = ti"
-                  style="width:52px; height:52px; border-radius:8px; display:flex; align-items:center;
-                         justify-content:center; cursor:pointer; border:2px solid; flex-direction:column; font-size:1.2rem;"
-                  [style.border-color]="spiritMerchantTargetTokenIdx === ti ? '#c9a84c' : 'rgba(255,255,255,0.2)'"
-                  [style.background]="spiritMerchantTargetTokenIdx === ti ? 'rgba(201,168,76,0.2)' : 'rgba(255,255,255,0.05)'">
-                  <span>🪙</span>
+                <div class="token-slot-mini" [class.selected]="spiritMerchantTargetTokenIdx === ti" (click)="spiritMerchantTargetTokenIdx = ti">
+                  <span class="coin-icon">🪙</span>
                   @if (spiritMerchantTargetTokenIdx === ti) {
-                    <span style="font-size:0.9rem; font-weight:bold; color:var(--gold);">{{ t }}</span>
+                    <span class="token-val-dim">{{ t }}</span>
                   }
                 </div>
               }
@@ -216,30 +219,26 @@
               <!-- Swap section -->
               @if (me?.tokens?.length > 0) {
                 <p class="modal-sub mt-16" style="font-size:0.85rem">Bạn có muốn hoán đổi?</p>
-                <p style="font-size:0.75rem; color:#aaa; margin-bottom:8px">Chọn 1 Token của bạn để đưa cho họ:</p>
-                <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:12px">
+                <p style="font-size:0.75rem; color:#ffffff; margin-bottom:8px">Chọn 1 Token của bạn để đưa cho họ:</p>
+                <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:16px">
                   @for (myT of me?.tokens; track $index; let ai = $index) {
-                    <div (click)="spiritMerchantActorTokenIdx = ai"
-                      style="width:52px; height:52px; border-radius:8px; display:flex; align-items:center;
-                             justify-content:center; cursor:pointer; border:2px solid; flex-direction:column; font-size:1.2rem;"
-                      [style.border-color]="spiritMerchantActorTokenIdx === ai ? '#c9a84c' : 'rgba(255,255,255,0.2)'"
-                      [style.background]="spiritMerchantActorTokenIdx === ai ? 'rgba(201,168,76,0.2)' : 'rgba(255,255,255,0.05)'">
-                      <span>🪙</span>
-                      <span style="font-size:0.9rem; font-weight:bold; color:white;">{{ myT }}</span>
+                    <div class="token-slot-mini" [class.selected]="spiritMerchantActorTokenIdx === ai" (click)="spiritMerchantActorTokenIdx = ai">
+                      <span class="coin-icon">🪙</span>
+                      <span class="token-val-dim">{{ myT }}</span>
                     </div>
                   }
                 </div>
                 
-                <button class="btn btn-gold btn-block mt-16" 
+                <button class="btn btn-gold btn-block mt-24" 
                         [disabled]="spiritMerchantActorTokenIdx < 0"
                         (click)="resolveSpiritMerchant(spiritMerchantTargetTokenIdx)">
-                  🔄 Đổi Token này
+                  🔄 ĐỔI TOKEN NÀY
                 </button>
               } @else {
                 <p class="text-dim mt-16" style="font-size:0.85rem">Bạn không có Token nào để đổi.</p>
               }
             }
-            <button class="btn btn-outline btn-block mt-16" (click)="resolveSpiritMerchant(-1)">Bỏ qua, không đổi</button>
+            <button class="btn btn-outline btn-block mt-16" (click)="resolveSpiritMerchant(-1)">BỎ QUA, KHÔNG ĐỔI</button>
           }
 
           @if (s.pendingModal.data?.peekMode === 'house') {
@@ -387,7 +386,7 @@
             <p class="side-label">Lịch sử cộng xu</p>
             @for (h of me!.tokenHistory; track $index) {
               <div style="font-size: 0.75rem; display: flex; justify-content: space-between; margin-bottom: 2px;">
-                <span style="color: #aaa;">Trận {{ h.round }}{{ h.reason ? ' (' + h.reason + ')' : '' }}:</span>
+                <span style="color: #ffffff;">Trận {{ h.round }}{{ h.reason ? ' (' + h.reason + ')' : '' }}:</span>
                 <span [class.text-gold]="h.amount > 0" [class.text-danger]="h.amount < 0" style="font-weight: bold;">{{ h.amount > 0 ? '+' : '' }}{{ h.amount }}</span>
               </div>
             }

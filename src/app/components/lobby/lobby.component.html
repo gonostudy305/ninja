@@ -1,9 +1,5 @@
 <section class="lobby-page">
-  <div class="bg-circles">
-    <div class="circle circle-1"></div>
-    <div class="circle circle-2"></div>
-    <div class="circle circle-3"></div>
-  </div>
+  <div class="bg-circles"></div>
 
   <div class="lobby-container">
     <div class="logo-area">
@@ -11,9 +7,9 @@
       <h1 class="game-title">Night of the Ninja</h1>
       <p class="game-subtitle">Online Multiplayer</p>
       <div class="faction-tags">
-        <span class="badge badge-crane">🦢 Crane</span>
+        <span class="badge badge-crane">Crane</span>
         <span class="badge badge-gold">VS</span>
-        <span class="badge badge-lotus">🪷 Lotus</span>
+        <span class="badge badge-lotus">Lotus</span>
       </div>
     </div>
 
@@ -22,9 +18,9 @@
     @if (!rId()) {
       <div class="section">
         <h3 class="section-label">Tên của bạn</h3>
-        <div class="name-input-wrap mb-16">
+        <div class="name-input-wrap">
           <input
-            class="name-input w-full"
+            class="name-input"
             type="text"
             placeholder="Nhập tên..."
             [ngModel]="playerName()"
@@ -35,12 +31,12 @@
       </div>
 
       <div class="section flex flex-col gap-16">
-        <button class="btn btn-gold btn-lg btn-block" (click)="createRoom()">
+        <button class="btn btn-gold btn-block" (click)="createRoom()">
           🏰 &nbsp; Tạo phòng mới
         </button>
 
-        <div class="join-room-box mt-16 p-16" style="background: rgba(0,0,0,0.5); border-radius: var(--radius)">
-          <h3 class="section-label" style="text-align: left; margin-bottom: 8px;">Vào phòng (nếu có mã)</h3>
+        <div class="join-room-box">
+          <h3 class="section-label">Vào phòng (nếu có mã)</h3>
           <div class="flex gap-8">
             <input
               class="name-input flex-1"
@@ -48,7 +44,6 @@
               placeholder="VD: ABCD"
               [ngModel]="roomCodeInput()"
               (ngModelChange)="roomCodeInput.set($event)"
-              style="text-transform: uppercase;"
               maxlength="6"
             />
             <button class="btn btn-outline" (click)="joinRoom()">🎲 Vào</button>
@@ -57,18 +52,18 @@
       </div>
     } @else {
       <div class="section text-center">
-        <h2 class="text-gold" style="font-size: 2rem; letter-spacing: 2px;">{{ rId() }}</h2>
+        <h2 class="text-gold" style="font-size: 2.5rem; letter-spacing: 4px;">{{ rId() }}</h2>
         <p class="text-dim">Mã phòng của bạn</p>
       </div>
 
       <div class="section">
         <h3 class="section-label">Đang chờ ({{ s().players.length }}/11) ...</h3>
-        <div class="waiting-list mt-16" style="background: rgba(0,0,0,0.3); border-radius: var(--radius); padding: 16px;">
+        <div class="waiting-list">
           @for (p of s().players; track p.id) {
-            <div class="flex justify-between items-center mb-8" style="padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1)">
+            <div class="player-row">
               <span class="text-white">{{ p.name }} {{ p.id === lId() ? '(Bạn)' : '' }}</span>
               @if ($index === 0) {
-                <span class="badge badge-gold" style="font-size: 0.6rem">Chủ phòng</span>
+                <span class="badge badge-gold">Chủ phòng</span>
               }
             </div>
           }
@@ -78,9 +73,9 @@
         </div>
       </div>
 
-      <div class="section mt-24">
+      <div class="section">
         @if (isHost) {
-          <button class="btn btn-gold btn-lg btn-block" [disabled]="s().players.length < 4" (click)="startGame()">
+          <button class="btn btn-gold btn-block" [disabled]="s().players.length < 4" (click)="startGame()">
             ⚔️ &nbsp; Bắt đầu (Cần ít nhất 4)
           </button>
         } @else {

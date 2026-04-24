@@ -1,85 +1,37 @@
 .lobby-page {
-  min-height: 100vh;
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px; position: relative; overflow: hidden;
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 20px; background: var(--bg);
 }
-
-.bg-circles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
-.circle {
-  position: absolute; border-radius: 50%;
-  filter: blur(80px); opacity: 0.12;
-  animation: float 8s ease-in-out infinite;
-}
-.circle-1 { width: 500px; height: 500px; background: var(--crane); top: -100px; left: -100px; animation-delay: 0s; }
-.circle-2 { width: 400px; height: 400px; background: var(--lotus); bottom: -80px; right: -80px; animation-delay: 3s; }
-.circle-3 { width: 300px; height: 300px; background: var(--gold); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: 5s; }
 
 .lobby-container {
-  position: relative; z-index: 1;
-  background: rgba(13,13,20,0.85); backdrop-filter: blur(20px);
-  border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 40px 48px; max-width: 520px; width: 100%;
-  box-shadow: var(--shadow);
+  background: var(--bg-panel); border: 2px solid var(--border);
+  border-radius: 12px; padding: 40px;
+  max-width: 480px; width: 100%; box-shadow: var(--shadow);
 }
 
-.logo-area { text-align: center; }
-.logo-icon {
-  font-size: 5rem; display: block; margin-bottom: 16px;
-  animation: float 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 20px rgba(201,168,76,0.5));
-}
-.game-title {
-  font-size: 2rem; color: var(--gold);
-  background: linear-gradient(135deg, var(--gold-dim), var(--gold-light), var(--gold));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow: none; line-height: 1.2;
-}
-.game-subtitle { color: var(--text-dim); margin-top: 6px; font-size: 0.9rem; }
-.faction-tags { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; }
+.logo-area { text-align: center; margin-bottom: 20px; }
+.logo-icon  { font-size: 5rem; display: block; margin-bottom: 10px; }
+.game-title { font-size: 2rem; font-weight: 900; color: #fff; margin: 0; }
+.game-subtitle { color: #ffffff; font-size: 0.9rem; margin-top: 5px; text-transform: uppercase; letter-spacing: 2px; }
 
+.section { margin-bottom: 25px; }
 .section-label {
-  font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
-  color: var(--gold-dim); margin-bottom: 14px;
+  font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px;
+  color: #ffffff; margin-bottom: 12px; font-weight: 900;
 }
 
-.count-pills { display: flex; gap: 10px; flex-wrap: wrap; }
-.count-pill {
-  flex: 1; min-width: 44px; padding: 10px 6px;
-  border-radius: var(--radius); border: 1.5px solid var(--border);
-  background: var(--bg-dark); color: var(--text-dim);
-  font-weight: 700; font-size: 1rem; cursor: pointer;
-  transition: all 0.2s ease;
+.join-room-box {
+  background: #000; border: 1px solid #333;
+  border-radius: 8px; padding: 20px;
 }
-.count-pill.active {
-  background: rgba(201,168,76,0.15); border-color: var(--gold);
-  color: var(--gold); box-shadow: var(--glow-gold);
-}
-.count-pill:hover:not(.active) { border-color: var(--gold-dim); color: var(--text); }
 
-.name-grid { display: flex; flex-direction: column; gap: 10px; }
-.name-input-wrap {
-  display: flex; align-items: center; gap: 12px;
-  background: var(--bg-dark); border: 1px solid var(--border);
-  border-radius: var(--radius); padding: 6px 14px;
-  transition: border-color 0.2s;
+.waiting-list {
+  background: #000; border-radius: 6px; padding: 15px;
+  max-height: 300px; overflow-y: auto;
 }
-.name-input-wrap:focus-within { border-color: var(--gold-dim); }
-.player-number {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--bg-panel); border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.75rem; color: var(--text-dim); flex-shrink: 0; font-weight: 700;
-}
-.name-input {
-  flex: 1; background: transparent; border: none; outline: none;
-  color: var(--text); font-family: 'Noto Sans', sans-serif;
-  font-size: 0.95rem; padding: 6px 0;
-}
-.name-input::placeholder { color: var(--text-dim); }
 
-.start-btn { margin-top: 8px; animation: glow-pulse 3s infinite; }
-.rules-hint {
-  text-align: center; color: var(--text-dim); font-size: 0.78rem;
-  margin-top: 16px; opacity: 0.7;
+.player-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid #222;
 }
+.player-row:last-child { border-bottom: none; }

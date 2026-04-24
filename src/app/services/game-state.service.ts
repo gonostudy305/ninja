@@ -19,15 +19,15 @@ const INITIAL_STATE: GameState = {
 export class GameStateService {
   private _state = signal<GameState>({ ...INITIAL_STATE });
   readonly state = this._state.asReadonly();
-  
+
   private db = inject(Database);
   roomId = signal<string | null>(null);
   localPlayerId = signal<string | null>(null);
 
-  constructor(private deck: DeckService, private router: Router) {}
+  constructor(private deck: DeckService, private router: Router) { }
 
   get s() { return this._state(); }
-  
+
   joinRoom(roomId: string, playerId: string) {
     this.roomId.set(roomId);
     this.localPlayerId.set(playerId);
@@ -143,17 +143,20 @@ export class GameStateService {
   }
 
   private getRandomTokenValue(): number {
-    return [2, 3, 4][Math.floor(Math.random() * 3)];
+    const r = Math.random();
+    if (r < 0.20) return 4;   // 20%
+    if (r < 0.65) return 2;   // 45% (0.65 - 0.20)
+    return 3;                // 35% (1.0 - 0.65)
   }
 
   private addRandomTokenToPlayer(playerId: string, round: number, reason?: string): number {
     const val = this.getRandomTokenValue();
     this.setState(s => ({
       ...s,
-      players: s.players.map(p => p.id === playerId ? { 
-        ...p, 
+      players: s.players.map(p => p.id === playerId ? {
+        ...p,
         tokens: [...p.tokens, val],
-        tokenHistory: [...(p.tokenHistory || []), { round, amount: val, reason }] 
+        tokenHistory: [...(p.tokenHistory || []), { round, amount: val, reason }]
       } : p)
     }));
     return val;
@@ -167,37 +170,37 @@ export class GameStateService {
   async createRoom(playerName: string) {
     const rId = Math.random().toString(36).substring(2, 6).toUpperCase();
     const pId = Math.random().toString(36).substring(2, 9);
-    
+
     const hostPlayer: Player = {
-        id: pId, name: playerName, houseCard: null, ninjaCards: [],
-        draftHand: [], draftPassCards: [], tokens: [], tokenHistory: [], isAlive: true, isHouseRevealed: false
+      id: pId, name: playerName, houseCard: null, ninjaCards: [],
+      draftHand: [], draftPassCards: [], tokens: [], tokenHistory: [], isAlive: true, isHouseRevealed: false
     };
 
     const initState = { ...INITIAL_STATE, players: [hostPlayer] };
     await set(ref(this.db, `rooms/${rId}/gameState`), initState);
-    
+
     this.joinRoom(rId, pId);
     return rId;
   }
 
   async joinExistingRoom(rId: string, playerName: string) {
     const pId = Math.random().toString(36).substring(2, 9);
-    
+
     const snap = await get(ref(this.db, `rooms/${rId.toUpperCase()}/gameState`));
     if (!snap.exists()) throw new Error('Room không tồn tại');
-    
+
     const s = snap.val() as GameState;
     if (s.phase !== 'lobby') throw new Error('Trận đấu đã bắt đầu');
     if (s.players.length >= 11) throw new Error('Phòng đã đầy');
-    
+
     const newPlayer: Player = {
-        id: pId, name: playerName, houseCard: null, ninjaCards: [],
-        draftHand: [], draftPassCards: [], tokens: [], tokenHistory: [], isAlive: true, isHouseRevealed: false
+      id: pId, name: playerName, houseCard: null, ninjaCards: [],
+      draftHand: [], draftPassCards: [], tokens: [], tokenHistory: [], isAlive: true, isHouseRevealed: false
     };
 
     s.players.push(newPlayer);
     await set(ref(this.db, `rooms/${rId.toUpperCase()}/gameState`), s);
-    
+
     this.joinRoom(rId.toUpperCase(), pId);
     return true;
   }
@@ -323,7 +326,7 @@ export class GameStateService {
     const actor = this.s.players.find(p => p.id === actorId)!;
     const target = this.s.players.find(p => p.id === targetId)!;
     this.log(`${actor.name} dùng Mystic (2) lên ${target.name} | Xem bài Gia Tộc và 1 lá Ninja của mục tiêu`);
-    
+
     // A card is "hidden" if it's a passive card, or an active card whose phase hasn't started yet.
     // If an active card's phase is the current phase or a past phase, it's already public/used.
     const currentPhaseOrder = ['spy', 'mystic', 'trickster', 'blind-assassin', 'shinobi'];
@@ -351,7 +354,7 @@ export class GameStateService {
   getParticipantsForPhase(phase: string): Player[] {
     const prefix = phase.replace('night-', '');
     const participants = this.s.players.filter(p => p.isAlive && p.ninjaCards.some(c => c.phase === prefix));
-    
+
     return participants.sort((a, b) => {
       const orderA = a.ninjaCards.find(c => c.phase === prefix)?.phaseOrder ?? 99;
       const orderB = b.ninjaCards.find(c => c.phase === prefix)?.phaseOrder ?? 99;
@@ -436,7 +439,7 @@ export class GameStateService {
         const newRemaining = [...remaining.slice(0, insertAt), newItem, ...remaining.slice(insertAt)];
         const newQueue = [...this.s.nightQueue.slice(0, this.s.currentNightActionIndex + 1), ...newRemaining];
         this.update({ nightQueue: newQueue });
-        
+
         if (insertAt === 0) {
           this.log(`Grave Digger đã nhận 1 lá bí mật và dùng ngay lập tức!`);
         } else {
@@ -492,7 +495,7 @@ export class GameStateService {
         ...s,
         players: s.players.map(p =>
           p.id === targetId ? { ...p, tokens: shuffledTargetTokens } :
-          p.id === actorId  ? { ...p, tokens: shuffledActorTokens  } : p
+            p.id === actorId ? { ...p, tokens: shuffledActorTokens } : p
         ),
         pendingModal: { type: 'spirit-merchant', actorId, targetId, data: { peekMode: 'house', actor: actorForModal, target: targetForModal } }
       }));
@@ -504,10 +507,12 @@ export class GameStateService {
         ...s,
         players: s.players.map(p =>
           p.id === targetId ? { ...p, tokens: shuffledTargetTokens } :
-          p.id === actorId  ? { ...p, tokens: shuffledActorTokens  } : p
+            p.id === actorId ? { ...p, tokens: shuffledActorTokens } : p
         ),
-        pendingModal: { type: 'spirit-merchant', actorId, targetId,
-          data: { peekMode: 'token', targetTokenCount: target.tokens.length, actor: { ...actor, tokens: shuffledActorTokens }, target: { ...target, tokens: shuffledTargetTokens } } }
+        pendingModal: {
+          type: 'spirit-merchant', actorId, targetId,
+          data: { peekMode: 'token', targetTokenCount: target.tokens.length, actor: { ...actor, tokens: shuffledActorTokens }, target: { ...target, tokens: shuffledTargetTokens } }
+        }
       }));
     }
   }
@@ -526,10 +531,10 @@ export class GameStateService {
             const theirToken = victim.tokens[targetTokenIdx];
             const newTokens = [...p.tokens];
             newTokens[actorTokenIdx] = theirToken;
-            return { 
-              ...p, 
-              tokens: newTokens, 
-              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: -myToken, reason: 'Hoán đổi' }, { round: s.round, amount: theirToken, reason: 'Hoán đổi' }] 
+            return {
+              ...p,
+              tokens: newTokens,
+              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: -myToken, reason: 'Hoán đổi' }, { round: s.round, amount: theirToken, reason: 'Hoán đổi' }]
             };
           }
           if (p.id === targetId) {
@@ -538,10 +543,10 @@ export class GameStateService {
             const theirToken = p.tokens[targetTokenIdx];
             const newTokens = [...p.tokens];
             newTokens[targetTokenIdx] = myToken;
-            return { 
-              ...p, 
-              tokens: newTokens, 
-              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: -theirToken, reason: 'Hoán đổi' }, { round: s.round, amount: myToken, reason: 'Hoán đổi' }] 
+            return {
+              ...p,
+              tokens: newTokens,
+              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: -theirToken, reason: 'Hoán đổi' }, { round: s.round, amount: myToken, reason: 'Hoán đổi' }]
             };
           }
           return p;
@@ -557,11 +562,11 @@ export class GameStateService {
     this.log(`${actorName} dùng Thief (Trickster 5) | Lật bài Gia Tộc và cướp 1 Token bí mật từ người có nhiều Token hơn`);
     this.setState(s => {
       const otherAlivePlayers = s.players.filter(p => p.id !== actorId && p.isAlive);
-      
+
       // Anyone who has at least 1 token is a valid victim
       const victims = otherAlivePlayers.filter(p => p.tokens.length > 0)
-                                       .map(v => ({ ...v, tokens: this.shuffleArray(v.tokens) }));
-        
+        .map(v => ({ ...v, tokens: this.shuffleArray(v.tokens) }));
+
       const newPlayers = s.players.map(p => {
         if (p.id === actorId) return { ...p, isHouseRevealed: true };
         const v = victims.find(vx => vx.id === p.id);
@@ -585,15 +590,15 @@ export class GameStateService {
         return {
           ...s,
           players: s.players.map(p => {
-            if (p.id === actorId) return { 
-              ...p, 
-              tokens: [...p.tokens, stolenToken], 
-              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: stolenToken, reason: 'Trộm' }] 
+            if (p.id === actorId) return {
+              ...p,
+              tokens: [...p.tokens, stolenToken],
+              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: stolenToken, reason: 'Trộm' }]
             };
-            if (p.id === targetId) return { 
-              ...p, 
-              tokens: p.tokens.filter((_, i) => i !== tokenIndex), 
-              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: -stolenToken, reason: 'Bị trộm' }] 
+            if (p.id === targetId) return {
+              ...p,
+              tokens: p.tokens.filter((_, i) => i !== tokenIndex),
+              tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: -stolenToken, reason: 'Bị trộm' }]
             };
             return p;
           })
@@ -695,8 +700,8 @@ export class GameStateService {
   private endRound() {
     this.setState(s => {
       const bestAlive = s.players.filter(p => p.isAlive && p.houseCard?.faction !== 'ronin')
-        .sort((a,b) => a.houseCard!.rank - b.houseCard!.rank)[0];
-      
+        .sort((a, b) => a.houseCard!.rank - b.houseCard!.rank)[0];
+
       const mm = s.players.find(p => p.isAlive && p.ninjaCards.some(c => c.name === 'Mastermind'));
       let winFaction: Faction | null = null;
 
@@ -711,7 +716,7 @@ export class GameStateService {
       } else {
         winFaction = bestAlive?.houseCard?.faction ?? null;
       }
-      
+
       const newPlayers = s.players.map(p => {
         const isRonin = p.houseCard?.faction === 'ronin';
         const isMastermindRonin = p.ninjaCards.some(c => c.name === 'Mastermind') && isRonin;
@@ -721,8 +726,8 @@ export class GameStateService {
           return { ...p, tokens: [...p.tokens, val], tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: val, reason: 'Thắng vòng' }], isHouseRevealed: true, needsHouseReview: false };
         }
         if (isRonin && p.isAlive && !isMastermindRonin) {
-           const val = this.getRandomTokenValue();
-           return { ...p, tokens: [...p.tokens, val], tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: val, reason: 'Ronin sống sót' }], isHouseRevealed: true, needsHouseReview: false };
+          const val = this.getRandomTokenValue();
+          return { ...p, tokens: [...p.tokens, val], tokenHistory: [...(p.tokenHistory || []), { round: s.round, amount: val, reason: 'Ronin sống sót' }], isHouseRevealed: true, needsHouseReview: false };
         }
         return { ...p, isHouseRevealed: true, needsHouseReview: false };
       });
@@ -741,7 +746,7 @@ export class GameStateService {
 
   nextRound() {
     if (this.s.players.some(p => this.getPlayerTotalScore(p) >= 10)) {
-      const winner = this.s.players.reduce((a,b) => this.getPlayerTotalScore(a) > this.getPlayerTotalScore(b) ? a : b);
+      const winner = this.s.players.reduce((a, b) => this.getPlayerTotalScore(a) > this.getPlayerTotalScore(b) ? a : b);
       this.update({ phase: 'game-over', gameWinnerId: winner.id });
       this.router.navigate(['/end']); return;
     }
@@ -771,6 +776,6 @@ export class GameStateService {
         needsHouseReview: false
       }))
     }));
-    this.router.navigate(['/']); 
+    this.router.navigate(['/']);
   }
 }

@@ -10,8 +10,8 @@
       <div class="trophy">🏆</div>
       @if (winner) {
         <h1 class="title" style="font-size: 3.5rem; color: #f1c40f; text-shadow: 0 0 20px rgba(241,196,15,0.8); margin-bottom: 0;">{{ winner.name | uppercase }}</h1>
-        <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); font-size: 1.5rem; margin-top: 5px; margin-bottom: 15px;">ĐÃ CHIẾN THẮNG!</h2>
-        <span>{{ factionLabel(winner.houseCard?.faction) }} &nbsp;·&nbsp; {{ getPlayerScore(winner) }} Tokens 💰</span>
+        <h2 style="font-family: 'Cinzel Decorative', serif; color: #ffffff !important; font-size: 1.5rem; margin-top: 5px; margin-bottom: 15px;">ĐÃ CHIẾN THẮNG!</h2>
+        <span style="color: #ffffff !important;">{{ factionLabel(winner.houseCard?.faction) }} &nbsp;·&nbsp; {{ getPlayerScore(winner) }} Tokens 💰</span>
       } @else {
         <h1 class="title">Chiến thắng!</h1>
       }

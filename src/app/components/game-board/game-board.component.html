@@ -46,7 +46,7 @@
         <p class="mt-16 text-dim">Hạng: <strong class="text-gold">{{ rankLabel(s.pendingModal.data?.rank) }}</strong>
         </p>
       </div>
-      <button class="btn btn-outline btn-block mt-24" id="btn-close-peek" (click)="gs.closePeekModal()">Đã xem
+      <button class="btn btn-outline btn-block mt-24" id="btn-close-peek" (click)="nightAction.closePeekModal()">Đã xem
         xong</button>
       }
 
@@ -85,7 +85,7 @@
         </div>
         }
       </div>
-      <button class="btn btn-outline btn-block mt-24" (click)="gs.closePeekModal()"
+      <button class="btn btn-outline btn-block mt-24" (click)="nightAction.closePeekModal()"
         [disabled]="s.pendingModal.data.revealedIndex === null">Đã xem xong</button>
       }
 
@@ -533,8 +533,8 @@
         <div class="action-grid mt-16">
           <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="confirmSpyAction()"
             aria-label="Thực hiện hành động">🔍 THỰC HIỆN <span class="kbd-hint">ENTER</span></button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
-              class="kbd-hint">ESC</span></button>
+          <button class="btn btn-outline" (click)="nightAction.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA
+            <span class="kbd-hint">ESC</span></button>
         </div>
       </div>
       } @else {
@@ -599,8 +599,8 @@
             (click)="confirmTricksterAction()" aria-label="Thực hiện Trickster">
             ⚡ THỰC HIỆN <span class="kbd-hint">ENTER</span>
           </button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
-              class="kbd-hint">ESC</span></button>
+          <button class="btn btn-outline" (click)="nightAction.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA
+            <span class="kbd-hint">ESC</span></button>
         </div>
       </div>
       } @else {
@@ -625,8 +625,8 @@
         <div class="action-grid mt-16">
           <button class="btn btn-danger" [disabled]="!selectedTargetId" (click)="confirmAssassin()"
             aria-label="Giết mục tiêu">🗡️ GIẾT! <span class="kbd-hint">ENTER</span></button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
-              class="kbd-hint">ESC</span></button>
+          <button class="btn btn-outline" (click)="nightAction.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA
+            <span class="kbd-hint">ESC</span></button>
         </div>
       </div>
       } @else {
@@ -651,8 +651,8 @@
         <div class="action-grid mt-16">
           <button class="btn btn-gold" [disabled]="!selectedTargetId" (click)="shinobiPeek()"
             aria-label="Nhìn trộm bài">👁️ NHÌN TRỘM <span class="kbd-hint">ENTER</span></button>
-          <button class="btn btn-outline" (click)="gs.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA <span
-              class="kbd-hint">ESC</span></button>
+          <button class="btn btn-outline" (click)="nightAction.skipNightAction()" aria-label="Bỏ qua lượt">⏭️ BỎ QUA
+            <span class="kbd-hint">ESC</span></button>
         </div>
       </div>
       }
@@ -687,7 +687,7 @@
           </div>
           }
         </div>
-        <button class="btn btn-gold btn-lg mt-24" id="btn-next-round" (click)="gs.nextRound()">
+        <button class="btn btn-gold btn-lg mt-24" id="btn-next-round" (click)="nightAction.nextRound()">
           ⚔️ Vòng tiếp theo
         </button>
       </div>

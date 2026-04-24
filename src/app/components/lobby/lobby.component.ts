@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GameStateService } from '../../services/game-state.service';
+import { LobbyService } from '../../services/lobby.service';
 import { MASCOTS } from '../../models/types';
 
 @Component({
@@ -21,7 +22,7 @@ export class LobbyComponent {
   get rId() { return this.gs.roomId; }
   get lId() { return this.gs.localPlayerId; }
 
-  constructor(private gs: GameStateService, private router: Router) {
+  constructor(private gs: GameStateService, private lobby: LobbyService, private router: Router) {
     effect(() => {
       if (this.s().phase !== 'lobby') {
         this.router.navigate(['/game']);
@@ -37,7 +38,7 @@ export class LobbyComponent {
   async createRoom() {
     if (!this.playerName().trim()) { alert('Vui lòng nhập tên!'); return; }
     try {
-      await this.gs.createRoom(this.playerName().trim(), this.selectedMascot());
+      await this.lobby.createRoom(this.playerName().trim(), this.selectedMascot());
     } catch (e: any) {
       alert(e.message);
     }
@@ -47,13 +48,13 @@ export class LobbyComponent {
     if (!this.playerName().trim()) { alert('Vui lòng nhập tên!'); return; }
     if (!this.roomCodeInput().trim()) { alert('Vui lòng nhập mã phòng!'); return; }
     try {
-      await this.gs.joinExistingRoom(this.roomCodeInput().trim(), this.playerName().trim(), this.selectedMascot());
+      await this.lobby.joinExistingRoom(this.roomCodeInput().trim(), this.playerName().trim(), this.selectedMascot());
     } catch (e: any) {
       alert(e.message);
     }
   }
 
   startGame() {
-    this.gs.startGameHost();
+    this.lobby.startGameHost();
   }
 }

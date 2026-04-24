@@ -2,6 +2,8 @@ import { Component, computed, signal, effect, HostListener } from '@angular/core
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GameStateService } from '../../services/game-state.service';
+import { DraftService } from '../../services/draft.service';
+import { NightActionService } from '../../services/night-action.service';
 import { Player, NinjaCard, HouseCard } from '../../models/types';
 import { PlayerByIdPipe } from '../../pipes/player-by-id.pipe';
 
@@ -15,7 +17,7 @@ import { PlayerByIdPipe } from '../../pipes/player-by-id.pipe';
 export class GameBoardComponent {
   get s() { return this.gs.state(); }
 
-  constructor(public gs: GameStateService, private router: Router) {
+  constructor(public gs: GameStateService, public draft: DraftService, public nightAction: NightActionService, private router: Router) {
     effect(() => {
       if (this.gs.state().phase === 'game-over') {
         this.router.navigate(['/end']);
@@ -60,22 +62,23 @@ export class GameBoardComponent {
 
   doneViewing() {
     this.showCard = false;
-    this.gs.playerViewedHouse();
+    this.draft.playerViewedHouse();
   }
 
   selectCard(idx: number) { this.selectedCardIndex = idx; }
 
   confirmDraftPick() {
     if (this.selectedCardIndex === null) return;
-    const pId = this.localPlayer()?.id;
+    const pId = this.gs.localPlayerId();
     if (!pId) return;
 
     if (this.s.phase === 'draft-pick1') {
-      this.gs.draftPick1(pId, this.selectedCardIndex);
-    } else {
-      this.gs.draftPick2(pId, this.selectedCardIndex);
+      this.draft.draftPick1(pId, this.selectedCardIndex);
+    } else if (this.s.phase === 'draft-pick2') {
+      this.draft.draftPick2(pId, this.selectedCardIndex);
     }
     this.selectedCardIndex = null;
+    this.showCard = false;
   }
 
   selectTarget(id: string) { this.selectedTargetId = id; }
@@ -88,9 +91,9 @@ export class GameBoardComponent {
     if (!actor || !card) return;
 
     if (card.phase === 'spy') {
-      this.gs.actionViewHouseCard(actor.id, this.selectedTargetId);
+      this.nightAction.actionViewHouseCard(actor.id, this.selectedTargetId);
     } else if (card.phase === 'mystic') {
-      this.gs.actionViewMystic(actor.id, this.selectedTargetId);
+      this.nightAction.actionViewMystic(actor.id, this.selectedTargetId);
     }
     this.selectedTargetId = null;
   }
@@ -101,27 +104,27 @@ export class GameBoardComponent {
 
     switch (card.tricksterNumber) {
       case 1:
-        this.gs.actionShapeshifter(actor.id, this.selectedTargetId!, this.selected2ndTargetId!);
+        this.nightAction.actionShapeshifter(actor.id, this.selectedTargetId!, this.selected2ndTargetId!);
         break;
       case 2:
-        this.gs.actionGraveDigger(actor.id);
+        this.nightAction.actionGraveDigger(actor.id);
         break;
       case 3:
-        this.gs.actionTroublemaker(actor.id, this.selectedTargetId!);
+        this.nightAction.actionTroublemaker(actor.id, this.selectedTargetId!);
         break;
       case 4:
         if (!this.spiritMerchantMode) {
           // First: player must pick which mode (house or token) before target
           return; // handled by separate button in template
         }
-        this.gs.actionSpiritMerchant(actor.id, this.selectedTargetId!, this.spiritMerchantMode);
+        this.nightAction.actionSpiritMerchant(actor.id, this.selectedTargetId!, this.spiritMerchantMode);
         this.spiritMerchantMode = null;
         break;
       case 5:
-        this.gs.actionThief(actor.id);
+        this.nightAction.actionThief(actor.id);
         break;
       case 6:
-        this.gs.actionJudge(actor.id, this.selectedTargetId!);
+        this.nightAction.actionJudge(actor.id, this.selectedTargetId!);
         break;
     }
     this.selectedTargetId = null;
@@ -130,28 +133,28 @@ export class GameBoardComponent {
 
   confirmAssassin() {
     if (!this.selectedTargetId) return;
-    this.gs.attemptKill(this.currentNightActor()!.id, this.selectedTargetId);
+    this.nightAction.attemptKill(this.currentNightActor()!.id, this.selectedTargetId);
     this.selectedTargetId = null;
   }
 
   shinobiPeek() {
     if (!this.selectedTargetId) return;
-    this.gs.shinobiPeek(this.currentNightActor()!.id, this.selectedTargetId);
+    this.nightAction.shinobiPeek(this.currentNightActor()!.id, this.selectedTargetId);
   }
 
   shinobiDecide(doKill: boolean) {
     const m = this.s.pendingModal!; // actorId = the Shinobi player
-    this.gs.resolveShinobi(m.actorId, m.targetId!, doKill);
+    this.nightAction.resolveShinobi(m.actorId, m.targetId!, doKill);
     this.selectedTargetId = null;
   }
 
   // Modal Handlers
   resolveShapeshifterModal(swap: boolean) {
     const m = this.s.pendingModal!;
-    this.gs.resolveShapeshifter(swap, m.data.t1.id, m.data.t2.id);
+    this.nightAction.resolveShapeshifter(swap, m.data.t1.id, m.data.t2.id);
   }
 
-  revealMysticNinja(idx: number) { this.gs.revealMysticNinja(idx); }
+  revealMysticNinja(idx: number) { this.nightAction.revealMysticNinja(idx); }
 
   spiritMerchantMode: 'house' | 'token' | null = null;
   spiritMerchantActorTokenIdx: number = -1;
@@ -161,33 +164,33 @@ export class GameBoardComponent {
 
   resolveSpiritMerchant(targetTokenIdx: number) {
     const m = this.s.pendingModal!;
-    this.gs.resolveSpiritMerchant(m.actorId, m.data.target.id, this.spiritMerchantActorTokenIdx, targetTokenIdx);
+    this.nightAction.resolveSpiritMerchant(m.actorId, m.data.target.id, this.spiritMerchantActorTokenIdx, targetTokenIdx);
     this.spiritMerchantActorTokenIdx = -1;
     this.spiritMerchantTargetTokenIdx = -1;
   }
 
-  inspectGraveDiggerCard(id: string) { this.gs.graveDiggerReveal(id); }
+  inspectGraveDiggerCard(id: string) { this.nightAction.graveDiggerReveal(id); }
 
   resolveGraveDigger(card: NinjaCard | null) {
     const actorId = this.s.pendingModal?.actorId;
-    if (actorId) this.gs.resolveGraveDigger(actorId, card);
+    if (actorId) this.nightAction.resolveGraveDigger(actorId, card);
   }
 
   getPlayerScore(p: Player): number { return this.gs.getPlayerTotalScore(p); }
 
   resolveThief(victimId: string, tokenIndex: number) {
     const actorId = this.s.pendingModal?.actorId;
-    if (actorId) this.gs.resolveThief(actorId, victimId, tokenIndex);
+    if (actorId) this.nightAction.resolveThief(actorId, victimId, tokenIndex);
   }
 
   resolveTroublemaker(reveal: boolean) {
     const m = this.s.pendingModal!;
-    this.gs.resolveTroublemaker(reveal, m.targetId!);
+    this.nightAction.resolveTroublemaker(reveal, m.targetId!);
   }
 
   resolveReact(reactCardId: string | null) {
     const m = this.s.pendingModal!;
-    this.gs.resolveReact(m.targetId!, reactCardId, m.actorId);
+    this.nightAction.resolveReact(m.targetId!, reactCardId, m.actorId);
   }
 
   // Helpers
@@ -276,7 +279,7 @@ export class GameBoardComponent {
       if (['spy-result', 'mystic-peek'].includes(this.s.pendingModal.type)) {
         if (event.key === 'Enter' || event.key === 'Escape' || event.key === ' ') {
           if (this.s.pendingModal.type === 'mystic-peek' && this.s.pendingModal.data?.revealedIndex === null) return;
-          this.gs.closePeekModal();
+          this.nightAction.closePeekModal();
         }
         return;
       }
@@ -316,7 +319,7 @@ export class GameBoardComponent {
 
     // End Round
     if (this.s.phase === 'end-round' && (event.key === 'Enter' || event.key === ' ')) {
-      this.gs.nextRound();
+      this.nightAction.nextRound();
       return;
     }
 
@@ -329,7 +332,7 @@ export class GameBoardComponent {
         if (this.s.phase === 'night-shinobi') this.shinobiPeek();
       }
       if (event.key === 'Escape' || event.key === ' ') {
-        this.gs.skipNightAction();
+        this.nightAction.skipNightAction();
       }
 
       const num = parseInt(event.key);
